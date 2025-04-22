@@ -1,0 +1,19 @@
+ImagesExtract
+├── .gitignore
+├── 00_startskript.py
+├── 0skripts/
+│   ├── 01_ConvertWebp.py
+│   ├── 02_Folders.py
+│   ├── 03_Enhancement.py
+│   ├── 03_TransBack.py
+│   ├── 04_Extract.py
+│   ├── 04_ExtractGray.py
+│   ├── 05_CleanUp.py
+│   ├── 06_Scal.py
+│   ├── 07_Collation.py
+│   ├── _logger.py
+│   ├── _utils.py
+│   └── settings.ini
+├── 250118__ar_farm_04.png
+├── InTree.py
+└── InTree.txt
