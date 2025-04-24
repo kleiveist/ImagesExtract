@@ -9,7 +9,7 @@ def create_collation_folders():
     Erstellt in allen definierten Output-Foldern (z. B. TransBack, Enhancement, Whitepaper, Enhancwhite, EierKucehn, ...)
     einen "+Collation"-Ordner und kopiert alle PNG-Dateien aus den jeweiligen Output-Foldern (und deren Unterordnern)
     dorthin.
-    
+
     Dabei werden:
       - Dateien, die sich in Unterordnern befinden, deren Name exakt dem Muster "x" gefolgt von Ziffern entspricht
         (z. B. x25, x50, …), in einen entsprechenden Unterordner innerhalb von "+Collation" kopiert.
@@ -17,7 +17,7 @@ def create_collation_folders():
         nach einem Muster wie "_x25", "_x50", etc. gesucht. Trifft dieses zu, wird die Datei in einen entsprechenden
         Unterordner innerhalb von "+Collation" kopiert.
       - Alle übrigen PNG-Dateien werden direkt in den "+Collation"-Ordner kopiert.
-    
+
     Wichtig: Es wird geprüft, ob mindestens ein Output-Folder (output_foldes_collationX) existiert. Falls nicht,
     wird ein Fehlerblock ausgegeben.
     """
@@ -31,8 +31,9 @@ def create_collation_folders():
         "output_foldes_collation2": config.get("Settings", "output_foldes_collation2", fallback="Enhancement"),
         "output_foldes_collation3": config.get("Settings", "output_foldes_collation3", fallback="Whitepaper"),
         "output_foldes_collation4": config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite"),
-        "output_foldes_collation5": config.get("Settings", "output_foldes_collation5", fallback="CleanUp"),
-        "output_foldes_collation6": config.get("Settings", "output_foldes_collation6", fallback="TransBack-2"),
+        "output_foldes_collation5": config.get("Settings", "output_foldes_collation5", fallback="Enhanclean"),
+        "output_foldes_collation6": config.get("Settings", "output_foldes_collation6", fallback="Transclean"),
+        "output_foldes_collation6": config.get("Settings", "output_foldes_collation6", fallback="Enhwhitclean"),
         # Hier können weitere Output-Folder ergänzt werden, z. B. "output_foldes_collation6": "Name6", etc.
     }
 
@@ -69,7 +70,7 @@ def create_collation_folders():
                     # Bestimme den relativen Pfad zum Output-Folder
                     rel_path = os.path.relpath(file_path, out_folder)
                     path_components = rel_path.split(os.sep)
-                    
+
                     target_subfolder = None
                     # 1. Prüfe, ob die Datei in einem Unterordner liegt, dessen Name exakt "x" gefolgt von Ziffern ist.
                     if len(path_components) > 1 and re.match(r'^x\d+$', path_components[0], re.IGNORECASE):
@@ -80,7 +81,7 @@ def create_collation_folders():
                         m = re.search(r'_x(\d+)$', base_name, re.IGNORECASE)
                         if m:
                             target_subfolder = "x" + m.group(1)
-                    
+
                     if target_subfolder:
                         target_subdir = os.path.join(collation_dir, target_subfolder)
                         os.makedirs(target_subdir, exist_ok=True)

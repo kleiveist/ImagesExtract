@@ -159,23 +159,23 @@ if __name__ == "__main__":
         "Collation2": config.get("Settings", "output_foldes_collation2", fallback="Enhancement"),
         "Collation3": config.get("Settings", "output_foldes_collation3", fallback="Whitepaper"),
         "Collation4": config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite"),
-        "Collation5": config.get("Settings", "output_foldes_collation5", fallback="CleanUp"),
-        "Collation6": config.get("Settings", "output_foldes_collation6", fallback="TransBack-2")
+        "Collation5": config.get("Settings", "output_foldes_collation5", fallback="Enhanclean"),
+        "Collation6": config.get("Settings", "output_foldes_collation6", fallback="Transclean"),
+        "Collation7": config.get("Settings", "output_foldes_collation7", fallback="Enhwhitclean")
     }
 
-    # -------------------------------------------------------------------
+# -------------------------------------------------------------------
     # Auswertung der Toggle-Flags aus dem [CleanUp]-Abschnitt für Collation1 bis Collation6
     # Hier wird für jeden Collation-Key aus der INI geprüft, ob die Verarbeitung aktiviert ist.
     # -------------------------------------------------------------------
     collation_flags = {}
-    for n in range(1, 7):
+    for n in range(1, 8):
         key = f"collation{n}"
         try:
             flag_value = config.get("CleanUp", key).strip().lower()
         except (configparser.NoOptionError, configparser.NoSectionError):
             flag_value = "true"  # Standardwert, falls nicht definiert
         collation_flags[f"Collation{n}"] = flag_value in valueOn
-
     # -------------------------------------------------------------------
     # Erstelle ein Dictionary mit den vollständigen Pfaden der zu verarbeitenden Collation-Ordner,
     # allerdings nur, wenn das jeweilige Toggle-Flag auf "on" steht.
@@ -198,7 +198,6 @@ if __name__ == "__main__":
 
     if not collation_folders:
         log_message("Alle Collation-Verarbeitungen wurden deaktiviert. Skript wird beendet.", level="info")
-        exit(0)
 
     # -------------------------------------------------------------------
     # Verarbeitung der Bilder in den gefundenen (aktivierten) Collation-Ordnern

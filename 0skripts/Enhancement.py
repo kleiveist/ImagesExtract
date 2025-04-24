@@ -171,16 +171,20 @@ target_collation_folder_name2 = f"03-{output_foldes_collation2}"
 output_foldes_collation4 = config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite")
 target_collation_folder_name4 = f"03-{output_foldes_collation4}"
 
-output_foldes_collation5 = config.get("Settings", "output_foldes_collation5", fallback="CleanUp")
+output_foldes_collation5 = config.get("Settings", "output_foldes_collation5", fallback="Enhanclean")
 target_collation_folder_name5 = f"03-{output_foldes_collation5}"
+
+output_foldes_collation7 = config.get("Settings", "output_foldes_collation7", fallback="Enhwhitclean")
+target_collation_folder_name7 = f"03-{output_foldes_collation7}"
 
 # 6. Finde die Collation-Ordner (in denen die Bilder ersetzt werden sollen)
 collation_folder2 = find_collation_folder(latest_date_folder, target_collation_folder_name2)
 collation_folder4 = find_collation_folder(latest_date_folder, target_collation_folder_name4)
 collation_folder5 = find_collation_folder(latest_date_folder, target_collation_folder_name5)
+collation_folder7 = find_collation_folder(latest_date_folder, target_collation_folder_name7)
 
 # Nur existierende Ordner in die Liste aufnehmen
-collation_folder_list = [folder for folder in [collation_folder2, collation_folder4, collation_folder5] if folder is not None]
+collation_folder_list = [folder for folder in [collation_folder2, collation_folder4, collation_folder5, collation_folder7] if folder is not None]
 
 if not collation_folder_list:
     log_message("Keine gültigen Collation-Ordner gefunden. Skript wird beendet.", level="info")

@@ -1,0 +1,2067 @@
+📂 ImagesExtract
+├── 📝 .gitignore
+├── 📝 InContent.txt
+├── 📝 README.md
+├── 📄 config.yml
+├── 📂 examples/
+│   └── 📄 250118__ar_farm_04.png
+├── 📂 image_extractor/
+│   ├── 🐍 00_startskript.py
+│   └── 📂 0skripts/
+│       ├── 🐍 CleanUp.py
+│       ├── 🐍 Collation.py
+│       ├── 🐍 ConvertWebp.py
+│       ├── 🐍 Enhancement.py
+│       ├── 🐍 Extract.py
+│       ├── 🐍 ExtractGray.py
+│       ├── 🐍 Folders.py
+│       ├── 🐍 Scal.py
+│       ├── 🐍 TransBack.py
+│       ├── 🐍 _logger.py
+│       ├── 🐍 _utils.py
+│       └── 📄 settings.ini
+├── 📂 instance/
+│   └── 💾 login.db
+├── 📝 requirements.txt
+├── 📂 src/
+│   ├── 🐍 __init__.py
+│   ├── 🐍 app.py
+│   └── 📂 blueprints/
+│       └── 🐍 extractor.py
+├── 📂 static/
+│   ├── 📂 css/
+│   └── 📂 js/
+├── 📂 templates/
+│   ├── 🌐 base.html
+│   ├── 🌐 index.html
+│   ├── 🌐 login.html
+│   └── 🌐 register.html
+└── 📂 tests/
+    ├── 🐍 test_convert.py
+    ├── 🐍 test_extract.py
+    └── 🐍 test_routes.py
+
+=== Datei-Inhalte ===
+
+📝 --- .gitignore ---
+/250422
+0skripts/__pycache__
+📝 --- InContent.txt ---
+
+📝 --- README.md ---
+ImagesExtract
+
+Python
+License
+
+A modular Python project with a Flask web frontend and text extraction from images. ImagesExtract lets you drag & drop images and returns the recognized text via a REST API.
+Table of Contents
+
+    Features
+    Requirements
+    Installation
+    Configuration
+    Project Structure
+    Usage
+    Example
+    Tests
+    Deployment
+    Contributing
+    License
+
+Features
+
+    Modular Design
+    Separation of core extraction logic and web API.
+    Web Frontend
+    Simple drag & drop interface for image upload.
+    REST API
+    /api/extract returns extracted text as JSON.
+    Configurable
+    Central settings via config.yml or legacy settings.ini.
+    Example Images
+    In the examples/ folder for testing and demos.
+    Automated Tests
+    pytest scripts in the tests/ directory.
+
+Requirements
+
+    Python 3.8 or higher
+    pip
+    Optional: Docker (for container deployment)
+
+Installation
+Clone the repository
+
+git clone https://github.com/YOUR_USERNAME/ImagesExtract.git
+cd ImagesExtract
+
+Create and activate a virtual environment
+
+📝 --- requirements.txt ---
+
+🐍 --- image_extractor\00_startskript.py ---
+import os
+import sys
+import subprocess
+import configparser
+
+def find_0skripts_directory(start_path):
+    """Suche rekursiv nach dem `0Skripts`-Ordner, indem nach oben gegangen wird."""
+    current_path = start_path
+    while True:
+        possible_path = os.path.join(current_path, "0Skripts")
+        if os.path.exists(possible_path):
+            return possible_path  # `0Skripts` wurde gefunden!
+        
+        # Falls Root-Verzeichnis erreicht, abbrechen
+        parent_path = os.path.dirname(current_path)
+        if parent_path == current_path:  
+            return None  # `0Skripts` nicht gefunden
+        current_path = parent_path  # Eine Ebene nach oben gehen
+
+# **1. FINDING TEST SCRIPT DIRECTORY (CURRENT LOCATION)**
+current_test_directory = os.getcwd()
+
+# **2. FIND THE CENTRAL `0Skripts` DIRECTORY RECURSIVELY**
+script_directory = find_0skripts_directory(current_test_directory)
+
+# **3. CHECK IF `0Skripts` DIRECTORY EXISTS**
+if not script_directory:
+    print("Could not find `0Skripts` directory! Make sure it exists in a parent directory.")
+    sys.exit(1)
+
+# **4. ADD `0Skripts` TO PYTHON PATH**
+sys.path.append(script_directory)
+
+# **5. IMPORT LOGGER FROM `_logger.py`**
+try:
+    from _logger import log_message, log_separator, shorten_path_last_n, init_logger
+except ImportError:
+    print("Could not import logger. Make sure `_logger.py` is in `0Skripts`.")
+    sys.exit(1)
+
+# **6. LOAD CONFIGURATION FROM .ini FILE**
+# Es wird nun in 0Skripts nach der settings.ini gesucht
+config = configparser.ConfigParser()
+config_file = os.path.join(script_directory, "settings.ini")
+if not os.path.exists(config_file):
+    log_message("Configuration file 'settings.ini' not found in the 0Skripts directory.", level="error")
+    sys.exit(1)
+config.read(config_file)
+
+# Definiere gültige Werte für aktiviert/deaktiviert
+valueOn = ["true", "1", "yes", "on"]
+valueOff = ["false", "0", "no", "off"]
+
+# **7. DEFINE SCRIPT PATHS**
+part_script1 = os.path.join(script_directory, "ConvertWebp.py")
+part_script2 = os.path.join(script_directory, "Folders.py")
+part_script3 = os.path.join(script_directory, "Enhancement.py")
+part_script4 = os.path.join(script_directory, "TransBack.py")
+part_script5 = os.path.join(script_directory, "Extract.py")
+part_script6 = os.path.join(script_directory, "ExtractGray.py")
+part_script7 = os.path.join(script_directory, "CleanUp.py")
+part_script8 = os.path.join(script_directory, "Scal.py")
+part_script9 = os.path.join(script_directory, "Collation.py")
+# part_script6 = os.path.join(script_directory, "Modu6.py")
+
+# **8. INITIALIZE LOGGER**
+init_logger(current_test_directory)
+
+log_separator()
+log_message(f"Starting test script in: {shorten_path_last_n(current_test_directory, 2)}", level="info")
+
+# **9. DEFINE SCRIPTS TO RUN WITH CONFIGURATION CHECK**
+scripts_to_run = [
+    ("ConvertWebp.py", part_script1),
+    ("Folders.py", part_script2),
+    ("Enhancement.py", part_script3),
+    ("TransBack.py", part_script4),
+    ("Extract.py", part_script5),
+    ("ExtractGray.py", part_script6),
+    ("CleanUp.py", part_script7),
+    ("Scal.py", part_script8),
+    ("Collation.py", part_script9)
+    # ("Modul6.py", part_script6)
+]
+
+for script_name, script_path in scripts_to_run:
+    # Hole den Modul-Status aus der ini-Datei (Standard: aktiviert)
+    enabled_str = config.get("Moduls", script_name, fallback="true").strip().lower()
+    if enabled_str in valueOff:
+        log_message(f"Skipping module {script_name} as it is disabled in the configuration.", level="info")
+        continue
+    elif enabled_str not in valueOn:
+        log_message(f"Module {script_name} has unrecognized value '{enabled_str}' in configuration. Defaulting to enabled.", level="warning")
+
+    # Überprüfe, ob das Skript existiert
+    if not os.path.exists(script_path):
+        log_message(f"{script_name} not found! Script will terminate.", level="error")
+        sys.exit(1)
+    
+    log_message(f"Launching script: {shorten_path_last_n(script_path, 2)}", level="info")
+    
+    try:
+        # Starte das Skript mit dem aktuellen Testverzeichnis als Argument
+        subprocess.run(["python", script_path, current_test_directory], check=True)
+        log_message(f"{script_name} finished successfully.", level="info")
+    except subprocess.CalledProcessError as e:
+        log_message(f"Script {script_name} execution failed: {e}", level="error")
+        sys.exit(1)
+
+log_separator()
+
+# Nach Ablauf aller Vorgänge: Falls in der INI aktiviert, erst nach Betätigung der Enter-Taste beenden.
+enter_confirmation_str = config.get("Settings", "enter_confirmation", fallback="false").strip().lower()
+if enter_confirmation_str in ["true", "1", "yes", "on"]:
+    input("Drücken Sie die Enter-Taste, um das Programm zu beenden...")
+🐍 --- image_extractor\0skripts\CleanUp.py ---
+import os
+import configparser
+import numpy as np
+import cv2
+from PIL import Image, ImageEnhance
+from pathlib import Path
+from _logger import log_message, shorten_path  # Zentrale Logging-Funktion und Hilfsfunktion
+from _utils import load_settings_ini, get_output_format, find_latest_date_folder
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Collation-Ordner suchen
+# -------------------------------------------------------------------
+def find_collation_folder(date_folder, collation_name):
+    """
+    Sucht innerhalb des date_folder nach einem Ordner mit dem Namen "03-[Collation-Name]".
+    Wird der Ordner gefunden, so wird er zurückgegeben, ansonsten wird nur eine Info-Meldung ausgegeben.
+    """
+    collation_folder = os.path.join(date_folder, collation_name)
+    if os.path.exists(collation_folder) and os.path.isdir(collation_folder):
+        log_message(f"Gefundener Collation-Ordner: {shorten_path(collation_folder)}", level="info")
+        return collation_folder
+    else:
+        log_message(f"Collation-Ordner '{collation_name}' nicht gefunden in {shorten_path(date_folder)}.", level="info")
+        return None
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Alle Bilddateien in einem Verzeichnis (und Unterordnern) finden
+# -------------------------------------------------------------------
+def find_all_images_in_directory(directory):
+    """
+    Findet alle unterstützten Bilddateien in einem Verzeichnis und dessen Unterordnern.
+    """
+    supported_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]
+    image_files = []
+    for root, _, files in os.walk(directory):
+        for file_name in files:
+            if any(file_name.lower().endswith(ext) for ext in supported_extensions):
+                image_files.append(os.path.join(root, file_name))
+    return image_files
+
+# -------------------------------------------------------------------
+# Funktion: Bild bereinigen – Hauptobjekt isolieren
+# -------------------------------------------------------------------
+def process_image(image_path, tolerance_lower, tolerance_upper):
+    """
+    Öffnet ein Bild, sucht per binärer Segmentierung (mittels cv2.inRange)
+    das größte zusammenhängende Objekt (oder das Objekt am Seedpunkt in der Bildmitte)
+    und entfernt alle Bereiche, die nicht zu diesem Objekt gehören (setzt sie transparent).
+
+    :param image_path: Pfad zum zu verarbeitenden Bild.
+    :param tolerance_lower: Untere Grenze der Intensitätswerte.
+    :param tolerance_upper: Obere Grenze der Intensitätswerte.
+    :return: Das bereinigte Bild (als BGRA), oder None bei Fehlern.
+    """
+    log_message(f"Verarbeite Bild: {shorten_path(image_path)}", level="info")
+    img = cv2.imread(image_path, cv2.IMREAD_UNCHANGED)
+    if img is None:
+        log_message(f"Fehler beim Laden des Bildes: {shorten_path(image_path)}", level="error")
+        return None
+
+    # Sicherstellen, dass ein Alpha-Kanal vorhanden ist
+    if len(img.shape) == 2:
+        img_color = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
+        alpha_channel = np.full(img.shape, 255, dtype=np.uint8)
+        img = cv2.merge([img_color[:,:,0], img_color[:,:,1], img_color[:,:,2], alpha_channel])
+    elif img.shape[2] == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2BGRA)
+    # Falls bereits BGRA, keine Änderung nötig
+
+    # Umrechnung in Graustufen (nur für BGR, ohne Alpha)
+    bgr = img[:, :, :3]
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+
+    # Erzeuge eine binäre Maske mittels cv2.inRange mit den angegebenen Toleranzwerten
+    mask = cv2.inRange(gray, tolerance_lower, tolerance_upper)
+    num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(mask, connectivity=8)
+    if num_labels <= 1:
+        log_message(f"Keine zusammenhängenden Objekte im Bild gefunden: {shorten_path(image_path)}", level="warning")
+        return None
+
+    # Ermittele den Seedpunkt (Mitte des Bildes) und bestimme, welchem Objekt dieser angehört.
+    h, w = gray.shape
+    center = (w // 2, h // 2)
+    seed_label = labels[center[1], center[0]]
+    if seed_label != 0:
+        chosen_label = seed_label
+    else:
+        areas = stats[1:, cv2.CC_STAT_AREA]  # Hintergrund (Label 0) wird ignoriert
+        if areas.size == 0:
+            log_message(f"Keine gültigen Objekte gefunden im Bild: {shorten_path(image_path)}", level="warning")
+            return None
+        chosen_label = np.argmax(areas) + 1  # +1, da Hintergrund ausgeschlossen
+
+    # Erzeuge eine Binärmaske, die genau das gewählte Objekt markiert
+    component_mask = (labels == chosen_label).astype(np.uint8) * 255
+    area = stats[chosen_label, cv2.CC_STAT_AREA]
+    if area < extract_size:
+        log_message(f"Extrahiertes Objekt zu klein ({area} Pixel): {shorten_path(image_path)}", level="warning")
+        return None
+
+    # Alle Bereiche außerhalb des Hauptobjekts werden entfernt (Alpha auf 0 setzen)
+    remove_mask = cv2.bitwise_not(component_mask)
+    img[:, :, 3] = np.where(remove_mask == 255, 0, img[:, :, 3])
+    return img
+
+# -------------------------------------------------------------------
+# STARTRUTINE
+# -------------------------------------------------------------------
+if __name__ == "__main__":
+    log_message("Starte Bildverarbeitung...", level="info")
+
+    # Arbeitsverzeichnis: Verzeichnis, in dem das Skript ausgeführt wird
+    base_dir = os.getcwd()
+
+    # 1. Finde den neuesten Datum-Ordner
+    latest_date_folder = find_latest_date_folder(base_dir)
+
+    # 2. SETTINGS.INI laden
+    config = load_settings_ini()
+    log_message("Lade settings.ini", level="info")
+
+    # 3. Ausgabeformat ermitteln
+    output_format = get_output_format(config)  # z. B. ".png"
+    if not output_format.startswith("."):
+        output_format = "." + output_format
+    output_format = output_format.lower()
+
+    # -------------------------------------------------------------------
+    # Hilfsfunktionen zum Auslesen von Integer- und Float-Werten aus der INI
+    # -------------------------------------------------------------------
+    def get_int(section, key, default):
+        try:
+            return config.getint(section, key)
+        except (ValueError, KeyError):
+            log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+            return default
+
+    def get_float(section, key, default):
+        try:
+            return config.getfloat(section, key)
+        except (ValueError, KeyError):
+            log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+            return default
+
+    # Werte für die Bildbearbeitung aus dem [CleanUp]-Abschnitt einlesen
+    extract_size    = get_int("Settings", "extractsize", 10)
+    tolerance_lower = get_int("CleanUp", "tolerance_lower", 100)
+    tolerance_upper = get_int("CleanUp", "tolerance_upper", 150)
+
+    # Definition der akzeptierten Schalterwerte
+    valueOn = ["true", "1", "yes", "on"]
+    valueOff = ["false", "0", "no", "off"]
+
+    # -------------------------------------------------------------------
+    # Ordnernamen aus dem [Settings]-Bereich auslesen
+    # -------------------------------------------------------------------
+    folders_to_process = {
+        "Collation1": config.get("Settings", "output_foldes_collation1", fallback="TransBack"),
+        "Collation2": config.get("Settings", "output_foldes_collation2", fallback="Enhancement"),
+        "Collation3": config.get("Settings", "output_foldes_collation3", fallback="Whitepaper"),
+        "Collation4": config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite"),
+        "Collation5": config.get("Settings", "output_foldes_collation5", fallback="CleanUp"),
+        "Collation6": config.get("Settings", "output_foldes_collation6", fallback="TransBack-2")
+    }
+
+    # -------------------------------------------------------------------
+    # Auswertung der Toggle-Flags aus dem [CleanUp]-Abschnitt für Collation1 bis Collation6
+    # Hier wird für jeden Collation-Key aus der INI geprüft, ob die Verarbeitung aktiviert ist.
+    # -------------------------------------------------------------------
+    collation_flags = {}
+    for n in range(1, 7):
+        key = f"collation{n}"
+        try:
+            flag_value = config.get("CleanUp", key).strip().lower()
+        except (configparser.NoOptionError, configparser.NoSectionError):
+            flag_value = "true"  # Standardwert, falls nicht definiert
+        collation_flags[f"Collation{n}"] = flag_value in valueOn
+
+    # -------------------------------------------------------------------
+    # Erstelle ein Dictionary mit den vollständigen Pfaden der zu verarbeitenden Collation-Ordner,
+    # allerdings nur, wenn das jeweilige Toggle-Flag auf "on" steht.
+    # -------------------------------------------------------------------
+    collation_folders = {}
+    for collation_key, folder_name in folders_to_process.items():
+        if not collation_flags.get(collation_key, True):
+            log_message(f"Verarbeitung für {collation_key} ({folder_name}) wurde deaktiviert.", level="info")
+            continue
+
+        # Überspringe Ordner, deren Name ein '+' enthält
+        if '+' in folder_name:
+            log_message(f"Überspringe Ordner 03-{folder_name} (Name enthält '+').", level="info")
+            continue
+
+        target_name = f"03-{folder_name}"
+        folder_path = find_collation_folder(latest_date_folder, target_name)
+        if folder_path:
+            collation_folders[collation_key] = folder_path
+
+    if not collation_folders:
+        log_message("Alle Collation-Verarbeitungen wurden deaktiviert. Skript wird beendet.", level="info")
+        exit(0)
+
+    # -------------------------------------------------------------------
+    # Verarbeitung der Bilder in den gefundenen (aktivierten) Collation-Ordnern
+    # -------------------------------------------------------------------
+    for folder_key, folder_path in collation_folders.items():
+        log_message(f"Verarbeite Ordner: {shorten_path(folder_path)}", level="info")
+        image_files = find_all_images_in_directory(folder_path)
+        for image_file in image_files:
+            processed_img = process_image(image_file, tolerance_lower, tolerance_upper)
+            if processed_img is not None:
+                if cv2.imwrite(image_file, processed_img):
+                    log_message(f"Überschrieben: {shorten_path(image_file)}", level="info")
+                else:
+                    log_message(f"Fehler beim Überschreiben von: {shorten_path(image_file)}", level="error")
+
+🐍 --- image_extractor\0skripts\Collation.py ---
+import os
+import shutil
+import re
+from _logger import log_message, shorten_path  # Zentrale Logging-Funktion und Hilfsfunktion
+from _utils import load_settings_ini, find_latest_date_folder
+
+def create_collation_folders():
+    """
+    Erstellt in allen definierten Output-Foldern (z. B. TransBack, Enhancement, Whitepaper, Enhancwhite, EierKucehn, ...)
+    einen "+Collation"-Ordner und kopiert alle PNG-Dateien aus den jeweiligen Output-Foldern (und deren Unterordnern)
+    dorthin.
+    
+    Dabei werden:
+      - Dateien, die sich in Unterordnern befinden, deren Name exakt dem Muster "x" gefolgt von Ziffern entspricht
+        (z. B. x25, x50, …), in einen entsprechenden Unterordner innerhalb von "+Collation" kopiert.
+      - Liegen Dateien direkt im Output-Folder oder in Unterordnern ohne solches Muster, wird zusätzlich im Dateinamen
+        nach einem Muster wie "_x25", "_x50", etc. gesucht. Trifft dieses zu, wird die Datei in einen entsprechenden
+        Unterordner innerhalb von "+Collation" kopiert.
+      - Alle übrigen PNG-Dateien werden direkt in den "+Collation"-Ordner kopiert.
+    
+    Wichtig: Es wird geprüft, ob mindestens ein Output-Folder (output_foldes_collationX) existiert. Falls nicht,
+    wird ein Fehlerblock ausgegeben.
+    """
+    base_dir = os.getcwd()
+    latest_date_folder = find_latest_date_folder(base_dir)
+    config = load_settings_ini()
+
+    # Definierte Output-Folder aus der settings.ini (Fallback-Werte, falls nicht definiert)
+    folder_names = {
+        "output_foldes_collation1": config.get("Settings", "output_foldes_collation1", fallback="TransBack"),
+        "output_foldes_collation2": config.get("Settings", "output_foldes_collation2", fallback="Enhancement"),
+        "output_foldes_collation3": config.get("Settings", "output_foldes_collation3", fallback="Whitepaper"),
+        "output_foldes_collation4": config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite"),
+        "output_foldes_collation5": config.get("Settings", "output_foldes_collation5", fallback="CleanUp"),
+        "output_foldes_collation6": config.get("Settings", "output_foldes_collation6", fallback="TransBack-2"),
+        # Hier können weitere Output-Folder ergänzt werden, z. B. "output_foldes_collation6": "Name6", etc.
+    }
+
+    # Erstelle Liste der vorhandenen Output-Folder (erwartet mit dem Präfix "03-")
+    output_folders = []
+    for key, folder in folder_names.items():
+        folder_path = os.path.join(latest_date_folder, f"03-{folder}")
+        if os.path.isdir(folder_path):
+            output_folders.append(folder_path)
+            log_message(f"Gefundener Output-Folder: {shorten_path(folder_path)}", level="info")
+        else:
+            log_message(f"Output-Folder {shorten_path(folder_path)} nicht gefunden.", level="warning")
+
+    # Prüfe, ob mindestens ein Output-Folder existiert
+    if not output_folders:
+        log_message("Fehler: Kein gültiger Output-Folder gefunden. Mindestens ein Output-Folder (output_foldes_collationX) muss vorhanden sein.", level="error")
+        # Hier kann alternativ auch eine Exception ausgelöst oder das Skript beendet werden:
+        return
+
+    # Bearbeitung jedes gefundenen Output-Folders
+    for out_folder in output_folders:
+        # Erstelle den +Collation-Ordner in diesem Output-Folder
+        collation_dir = os.path.join(out_folder, "+Collation")
+        os.makedirs(collation_dir, exist_ok=True)
+        log_message(f"Verwende +Collation-Ordner: {shorten_path(collation_dir)}", level="info")
+
+        # Rekursiver Durchlauf über out_folder (den +Collation-Ordner dabei überspringen)
+        for root, dirs, files in os.walk(out_folder):
+            if "+Collation" in dirs:
+                dirs.remove("+Collation")
+            for file in files:
+                if file.lower().endswith(".png"):
+                    file_path = os.path.join(root, file)
+                    # Bestimme den relativen Pfad zum Output-Folder
+                    rel_path = os.path.relpath(file_path, out_folder)
+                    path_components = rel_path.split(os.sep)
+                    
+                    target_subfolder = None
+                    # 1. Prüfe, ob die Datei in einem Unterordner liegt, dessen Name exakt "x" gefolgt von Ziffern ist.
+                    if len(path_components) > 1 and re.match(r'^x\d+$', path_components[0], re.IGNORECASE):
+                        target_subfolder = path_components[0]
+                    else:
+                        # 2. Falls nicht, prüfe, ob der Dateiname (ohne Extension) ein Muster wie _x25, _x50, etc. enthält.
+                        base_name = os.path.splitext(file)[0]
+                        m = re.search(r'_x(\d+)$', base_name, re.IGNORECASE)
+                        if m:
+                            target_subfolder = "x" + m.group(1)
+                    
+                    if target_subfolder:
+                        target_subdir = os.path.join(collation_dir, target_subfolder)
+                        os.makedirs(target_subdir, exist_ok=True)
+                        target_file = os.path.join(target_subdir, file)
+                        log_message(f"Kopiere {shorten_path(file_path)} in {shorten_path(target_subdir)}", level="info")
+                    else:
+                        target_file = os.path.join(collation_dir, file)
+                        log_message(f"Kopiere {shorten_path(file_path)} in {shorten_path(collation_dir)}", level="info")
+                    try:
+                        shutil.copy2(file_path, target_file)
+                    except Exception as e:
+                        log_message(f"Fehler beim Kopieren von {shorten_path(file_path)} nach {shorten_path(target_file)}: {str(e)}", level="error")
+
+if __name__ == "__main__":
+    create_collation_folders()
+
+🐍 --- image_extractor\0skripts\ConvertWebp.py ---
+import os
+import configparser
+import sys
+import datetime
+from PIL import Image
+from _logger import log_message, log_separator, shorten_path, init_logger, ICON_SUCCESS, ICON_ERROR, ICON_WARN, ICON_DELETE, ICON_ARROW
+
+# **1. LOAD SETTINGS.INI**
+script_directory = os.path.dirname(os.path.abspath(__file__))
+config_path = os.path.join(script_directory, "settings.ini")
+
+config = configparser.ConfigParser()
+config.read(config_path)
+
+output_format = config["Settings"]["output_format"]
+supported_formats = [".webp", ".bmp", ".jpg", ".jpeg", ".png", ".tiff"]
+
+# **2. CHECK HOW THE SCRIPT WAS STARTED**
+if len(sys.argv) > 1:
+    base_folder = sys.argv[1]
+else:
+    base_folder = os.getcwd()
+
+# **CHECK IF FILES EXIST (BEFORE CREATING A FOLDER)**
+files_to_convert = [
+    file for file in os.listdir(base_folder)
+    if os.path.splitext(file)[1].lower() in supported_formats
+]
+
+if not files_to_convert:
+    log_message("No convertible files found. Script will exit.", level="warning")
+    sys.exit(0)  # Exit script
+
+# **INITIALIZE LOGGER**
+init_logger(base_folder)
+script_name = os.path.basename(__file__)  # Dynamically get the script's filename
+log_message(f"{script_name} started with Input-Folder: {shorten_path(base_folder)}", level="info")
+
+# **3. CREATE NEW DATE-NAMED FOLDER**
+today_str = datetime.datetime.now().strftime("%y%m%d")
+new_folder = os.path.join(base_folder, today_str)
+
+counter = 1
+while os.path.exists(new_folder):
+    new_folder = os.path.join(base_folder, f"{today_str}_{counter:02d}")
+    counter += 1
+
+os.makedirs(new_folder)
+log_message(f"New working folder: {shorten_path(new_folder)}", level="info")
+
+# **4. AUTOMATICALLY SORT & MOVE FILES**
+log_separator()
+log_message("Sorting files:", level="info")
+
+file_dict = {}
+
+for file in files_to_convert:
+    file_ext = os.path.splitext(file)[1].lower()
+    target_folder = os.path.join(new_folder, f"01-{file_ext.strip('.')}")
+    os.makedirs(target_folder, exist_ok=True)
+
+    original_path = os.path.join(base_folder, file)
+    new_path = os.path.join(target_folder, file)
+    os.rename(original_path, new_path)
+
+    if file_ext not in file_dict:
+        file_dict[file_ext] = []
+    file_dict[file_ext].append(new_path)
+
+    log_message(f"  - {file} {ICON_ARROW} {shorten_path(target_folder)}", level="info")
+
+# **5. CREATE OUTPUT FOLDER**
+output_folder = os.path.join(new_folder, f"02-{output_format.strip('.')}")
+os.makedirs(output_folder, exist_ok=True)
+
+# **6. START CONVERSION**
+log_separator()
+log_message(f"Starting conversion to {output_format.upper()}", level="info")
+
+for file_ext, files in file_dict.items():
+    for file_path in files:
+        file_name = os.path.basename(file_path)
+        output_file = os.path.splitext(file_name)[0] + output_format
+        output_path = os.path.join(output_folder, output_file)
+
+        try:
+            with Image.open(file_path) as img:
+                img.save(output_path, output_format.strip(".").upper())
+            log_message(f"  - {file_name} {ICON_ARROW} {output_file} {ICON_SUCCESS} Successfully ", level="info")
+        except Exception as e:
+            log_message(f"  - {file_name} {ICON_ERROR} Error: {e}", level="error")
+
+log_separator()
+log_message(f"All converted files have been saved in\n'{shorten_path(output_folder)}'.", level="info")
+🐍 --- image_extractor\0skripts\Enhancement.py ---
+# ----------------------------------------------------------
+# Einstellungsbereich mit Erklärungen
+# ----------------------------------------------------------
+# Stufenzahl                (color_levels):
+#     Höhere Werte =       mehr Farben.
+#     Niedrigere Werte =   stärkere Vereinfachung.
+# ----------------------------------------------------------
+# Abstraktionsgrad          (abstraction_degree):
+#     Höhere Werte =       glattere und abstraktere Formen.
+#     Niedrigere Werte =   mehr Details bleiben erhalten.
+# ----------------------------------------------------------
+# Umsetzungsgenauigkeit     (accuracy):
+#     Höhere Werte =       weichere Kantenübergänge.
+#     Niedrigere Werte =   schärfere Kanten.
+# ----------------------------------------------------------
+# Rauschintensität          (noise_intensity):
+#     Höhere Werte =       stärkeres Papierkorn.
+#     Niedrigere Werte =   subtileres Rauschen.
+# ----------------------------------------------------------
+# Gewichtung der Kantenüberlagerung (edge_weight):
+#     Höhere Werte =       stärkere Kantenhervorhebung.
+#     Niedrigere Werte =   weniger Kanten.
+# ----------------------------------------------------------
+# Kontrasterhöhung          (contrast):
+#     Höhere Werte =       mehr Kontrast.
+#     Niedrigere Werte =   weniger Kontrast.
+# ----------------------------------------------------------
+# Helligkeitserhöhung       (brightness):
+#     Höhere Werte =       helleres Bild.
+#     Niedrigere Werte =   dunkleres Bild.
+# ----------------------------------------------------------
+import os
+import configparser
+import numpy as np
+import cv2
+from PIL import Image, ImageEnhance
+from pathlib import Path
+from _logger import log_message, shorten_path  # Zentrale Logging-Funktion und Hilfsfunktion
+from _utils import load_settings_ini, get_output_format, find_latest_date_folder
+
+# -------------------------------------------------------------------
+# Benutzerdefinierter Filter (ersetzt den alten dark_threshold-Ansatz)
+# -------------------------------------------------------------------
+def apply_custom_filter(image_path):
+    """Wendet den benutzerdefinierten Filter auf ein Bild an."""
+    # Bild mit OpenCV laden
+    img = cv2.imread(image_path)
+    if img is None:
+        raise ValueError("Bild konnte nicht geladen werden.")
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+    # Farbquantisierung (Color Clustering) mittels K-Means
+    Z = img.reshape((-1, 3))
+    Z = np.float32(Z)
+    K = SETTINGS["color_levels"]
+    criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 100, 0.2)
+    attempts = 10
+    _, labels, centers = cv2.kmeans(Z, K, None, criteria, attempts, cv2.KMEANS_RANDOM_CENTERS)
+    centers = np.uint8(centers)
+    quantized = centers[labels.flatten()]
+    quantized = quantized.reshape(img.shape)
+
+    # Erhöhe den Abstraktionsgrad durch mehrfache bilaterale Filterung
+    for _ in range(SETTINGS["abstraction_degree"]):
+        quantized = cv2.bilateralFilter(quantized, d=9, sigmaColor=75, sigmaSpace=75)
+
+    # Kanten erkennen; hier wird "accuracy" zur Anpassung der Schwellwerte genutzt
+    threshold1 = max(1, int(50 // SETTINGS["accuracy"]))
+    threshold2 = max(1, int(150 // SETTINGS["accuracy"]))
+    edges = cv2.Canny(quantized, threshold1=threshold1, threshold2=threshold2)
+    # Kanten invertieren und in den Farbraum konvertieren
+    edges_colored = cv2.cvtColor(edges, cv2.COLOR_GRAY2RGB)
+    edges_inverted = cv2.bitwise_not(edges_colored)
+
+    # Kombiniere das quantisierte Bild mit den invertierten Kanten,
+    # wobei "edge_weight" das Mischungsverhältnis bestimmt
+    combined = cv2.addWeighted(quantized, 1 - SETTINGS["edge_weight"],
+                               edges_inverted, SETTINGS["edge_weight"], 0)
+
+    # Subtiles Rauschen (Papierkorn) hinzufügen
+    noise = np.random.normal(0, SETTINGS["noise_intensity"], combined.shape).astype(np.uint8)
+    textured = cv2.addWeighted(combined, 0.95, noise, 0.05, 0)
+
+    # Konvertiere zurück zu PIL
+    final_image = Image.fromarray(textured)
+
+    # Helligkeit und Kontrast feinjustieren
+    enhancer = ImageEnhance.Contrast(final_image)
+    final_image = enhancer.enhance(SETTINGS["contrast"])
+    enhancer = ImageEnhance.Brightness(final_image)
+    final_image = enhancer.enhance(SETTINGS["brightness"])
+
+    return final_image
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Collation-Ordner suchen (keine Error-Ausgabe, nur Info)
+# -------------------------------------------------------------------
+def find_collation_folder(date_folder, collation_name):
+    """
+    Sucht innerhalb des date_folder nach einem Ordner mit dem Namen "03-[Collation-Name]".
+    Wird der Ordner gefunden, so wird er zurückgegeben, ansonsten wird nur eine Info-Meldung ausgegeben.
+    """
+    collation_folder = os.path.join(date_folder, collation_name)
+    if os.path.exists(collation_folder) and os.path.isdir(collation_folder):
+        log_message(f"Gefundener Collation-Ordner: {shorten_path(collation_folder)}", level="info")
+        return collation_folder
+    else:
+        log_message(f"Collation-Ordner '{collation_name}' nicht gefunden in {shorten_path(date_folder)}.", level="info")
+        return None
+
+# -------------------------------------------------------------------
+# STARTRUTINE
+# -------------------------------------------------------------------
+log_message("Starte Bildverarbeitung...", level="info")
+
+# Arbeitsverzeichnis (wo das Skript ausgeführt wird)
+base_dir = os.getcwd()
+
+# 1. Finde den neuesten Datum-Ordner (über _utils.py)
+latest_date_folder = find_latest_date_folder(base_dir)
+
+# 2. SETTINGS.INI laden (über _utils.py)
+config = load_settings_ini()
+log_message("Lade settings.ini", level="info")
+
+# 3. Ausgabeformat ermitteln (über _utils.py)
+output_format = get_output_format(config)  # z. B. ".png"
+if not output_format.startswith("."):
+    output_format = "." + output_format
+output_format = output_format.lower()
+
+# 4. Zusätzliche Bildverarbeitungs-Einstellungen aus der INI einlesen
+def get_int(section, key, default):
+    try:
+        return config.getint(section, key)
+    except (ValueError, KeyError):
+        log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+        return default
+
+def get_float(section, key, default):
+    try:
+        return config.getfloat(section, key)
+    except (ValueError, KeyError):
+        log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+        return default
+
+# Bildverarbeitungsparameter für den benutzerdefinierten Filter
+color_levels       = get_int("Settings", "color_levels", 7)         # Mehr Farben bei höheren Werten
+abstraction_degree = get_int("Settings", "abstraction_degree", 2)   # Glattere Formen bei höheren Werten
+accuracy           = get_int("Settings", "accuracy", 1)             # Weichere Kanten bei höheren Werten
+noise_intensity    = get_int("Settings", "noise_intensity", 10)       # Intensität des Rauschens (Papierkorn)
+edge_weight        = get_float("Settings", "edge_weight", 0.1)        # Gewichtung der Kantenüberlagerung
+contrast           = get_float("Settings", "contrast", 1.2)           # Kontrasterhöhung
+brightness         = get_float("Settings", "brightness", 1.05)        # Helligkeitserhöhung
+
+# Setze die globalen Einstellungen, sodass sie in der Filterfunktion genutzt werden können.
+SETTINGS = {
+    "color_levels": color_levels,
+    "abstraction_degree": abstraction_degree,
+    "accuracy": accuracy,
+    "noise_intensity": noise_intensity,
+    "edge_weight": edge_weight,
+    "contrast": contrast,
+    "brightness": brightness
+}
+
+# 5. Output-Folder Collation aus settings.ini lesen
+output_foldes_collation2 = config.get("Settings", "output_foldes_collation2", fallback="Enhancement")
+target_collation_folder_name2 = f"03-{output_foldes_collation2}"
+
+output_foldes_collation4 = config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite")
+target_collation_folder_name4 = f"03-{output_foldes_collation4}"
+
+output_foldes_collation5 = config.get("Settings", "output_foldes_collation5", fallback="CleanUp")
+target_collation_folder_name5 = f"03-{output_foldes_collation5}"
+
+# 6. Finde die Collation-Ordner (in denen die Bilder ersetzt werden sollen)
+collation_folder2 = find_collation_folder(latest_date_folder, target_collation_folder_name2)
+collation_folder4 = find_collation_folder(latest_date_folder, target_collation_folder_name4)
+collation_folder5 = find_collation_folder(latest_date_folder, target_collation_folder_name5)
+
+# Nur existierende Ordner in die Liste aufnehmen
+collation_folder_list = [folder for folder in [collation_folder2, collation_folder4, collation_folder5] if folder is not None]
+
+if not collation_folder_list:
+    log_message("Keine gültigen Collation-Ordner gefunden. Skript wird beendet.", level="info")
+    exit(0)
+else:
+    for folder in collation_folder_list:
+        log_message(f"   {shorten_path(folder)}", level="info")
+
+# 7. Ausgabe der Bildverarbeitungsparameter als Lognachrichten
+log_message("\n==================== AKTUELLE EINSTELLUNGEN ====================", level="info")
+log_message("Bildverarbeitungsparameter:", level="info")
+log_message(f"  - Stufenzahl (color_levels): {color_levels}", level="info")
+log_message(f"  - Abstraktionsgrad (abstraction_degree): {abstraction_degree}", level="info")
+log_message(f"  - Umsetzungsgenauigkeit (accuracy): {accuracy}", level="info")
+log_message(f"  - Rauschintensität (noise_intensity): {noise_intensity}", level="info")
+log_message(f"  - Kantengewichtung (edge_weight): {edge_weight}", level="info")
+log_message(f"  - Kontrasterhöhung (contrast): {contrast}", level="info")
+log_message(f"  - Helligkeitserhöhung (brightness): {brightness}", level="info")
+log_message("==============================================================\n", level="info")
+
+# -------------------------------------------------------------------
+# VERARBEITUNG DER BILDER
+# -------------------------------------------------------------------
+processed_files = 0
+
+# Es werden ausschließlich Bilder innerhalb der gefundenen Collation-Ordner verarbeitet.
+for current_folder in collation_folder_list:
+    for root, dirs, files in os.walk(current_folder):
+        for file in files:
+            if file.lower().endswith(output_format):
+                input_path = os.path.join(root, file)
+                # Da die Bilder ersetzt werden, wird der Output-Pfad exakt derselbe sein wie der Input-Pfad.
+                output_path = os.path.join(root, file)
+                log_message(f"Verarbeite Datei: {file}", level="info")
+                try:
+                    final_image = apply_custom_filter(input_path)
+                    final_image.save(output_path)
+                    log_message(f"Erfolgreich verarbeitet: {file}", level="info")
+                    processed_files += 1
+                except Exception as e:
+                    log_message(f"Fehler bei {file}: {str(e)}", level="error")
+
+log_message(f"Verarbeitung abgeschlossen! {processed_files} Bilder verarbeitet.", level="info")
+
+🐍 --- image_extractor\0skripts\Extract.py ---
+import os
+import configparser
+import numpy as np
+import cv2
+from PIL import Image, ImageEnhance
+from pathlib import Path
+from _logger import log_message, shorten_path  # Zentrale Logging-Funktion und Hilfsfunktion
+from _utils import load_settings_ini, get_output_format, find_latest_date_folder
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Collation-Ordner suchen (keine Error-Ausgabe, nur Info)
+# -------------------------------------------------------------------
+def find_collation_folder(date_folder, collation_name):
+    """
+    Sucht innerhalb des date_folder nach einem Ordner mit dem Namen "03-[Collation-Name]".
+    Wird der Ordner gefunden, so wird er zurückgegeben, ansonsten wird nur eine Info-Meldung ausgegeben.
+    """
+    collation_folder = os.path.join(date_folder, collation_name)
+    if os.path.exists(collation_folder) and os.path.isdir(collation_folder):
+        log_message(f"Gefundener Collation-Ordner: {shorten_path(collation_folder)}", level="info")
+        return collation_folder
+    else:
+        log_message(f"Collation-Ordner '{collation_name}' nicht gefunden in {shorten_path(date_folder)}.", level="info")
+        return None
+ 
+# -------------------------------------------------------------------
+# STARTRUTINE
+# -------------------------------------------------------------------
+log_message("Starte Bildverarbeitung...", level="info")
+
+# Arbeitsverzeichnis (wo das Skript ausgeführt wird)
+base_dir = os.getcwd()
+
+# 1. Finde den neuesten Datum-Ordner (über _utils.py)
+latest_date_folder = find_latest_date_folder(base_dir)
+
+# 2. SETTINGS.INI laden (über _utils.py)
+config = load_settings_ini()
+log_message("Lade settings.ini", level="info")
+
+# 3. Ausgabeformat ermitteln (über _utils.py)
+output_format = get_output_format(config)  # z. B. ".png"
+if not output_format.startswith("."):
+    output_format = "." + output_format
+output_format = output_format.lower()
+
+# 4. Zusätzliche Bildverarbeitungs-Einstellungen aus der INI einlesen
+def get_int(section, key, default):
+    try:
+        return config.getint(section, key)
+    except (ValueError, KeyError):
+        log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+        return default
+
+def get_float(section, key, default):
+    try:
+        return config.getfloat(section, key)
+    except (ValueError, KeyError):
+        log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+        return default
+
+# Aus der INI: Mindestgröße der zu extrahierenden Objekte in Pixeln (extractsize)
+extract_size = get_int("Settings", "extractsize", 10)
+
+# 5. Output-Folder für die Verarbeitung aus settings.ini einlesen
+#    Ordner 1: TransBack (für die Objektextraktion)
+output_foldes_collation1 = config.get("Settings", "output_foldes_collation1", fallback="TransBack")
+target_collation_folder_name1 = f"03-{output_foldes_collation1}"
+collation_folder1 = find_collation_folder(latest_date_folder, target_collation_folder_name1)
+
+#    Ordner 2: Enhancement
+output_foldes_collation2 = config.get("Settings", "output_foldes_collation2", fallback="Enhancement")
+target_collation_folder_name2 = f"03-{output_foldes_collation2}"
+collation_folder2 = find_collation_folder(latest_date_folder, target_collation_folder_name2)
+
+#    Ordner 5: CleanUp
+output_foldes_collation5 = config.get("Settings", "output_foldes_collation5", fallback="CleanUp")
+target_collation_folder_name5 = f"03-{output_foldes_collation5}"
+collation_folder5 = find_collation_folder(latest_date_folder, target_collation_folder_name5)
+
+#    Ordner 6: TransBack-2
+output_foldes_collation6 = config.get("Settings", "output_foldes_collation6", fallback="CleanUp")
+target_collation_folder_name6 = f"03-{output_foldes_collation6}"
+collation_folder6 = find_collation_folder(latest_date_folder, target_collation_folder_name6)
+
+if not (collation_folder1 or collation_folder2 or collation_folder5 or collation_folder6):
+    log_message("Kein gültiger Collation-Ordner gefunden. Skript wird beendet.", level="error")
+    exit(0)
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Alle Bilddateien in einem Verzeichnis (und Unterordnern) finden
+# -------------------------------------------------------------------
+def find_all_images_in_directory(directory):
+    """
+    Findet alle unterstützten Bilddateien in einem Verzeichnis und dessen Unterordnern.
+    :param directory: Wurzelverzeichnis.
+    :return: Liste aller gefundenen Bilddateipfade.
+    """
+    supported_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]
+    image_files = []
+    for root, _, files in os.walk(directory):
+        for file_name in files:
+            if any(file_name.lower().endswith(ext) for ext in supported_extensions):
+                image_files.append(os.path.join(root, file_name))
+    return image_files
+
+# -------------------------------------------------------------------
+# VERARBEITUNG DER BILDER – Objektextraktion (für beide Collation-Ordner)
+# -------------------------------------------------------------------
+def extract_objects_from_image(file_path, extract_size=10, base_folder=None):
+    """
+    Extrahiert einzelne Objekte aus einem Bild und speichert sie als separate PNG-Dateien.
+    Nach erfolgreicher Extraktion wird die Originaldatei gelöscht.
+    
+    :param file_path: Pfad zum Originalbild.
+    :param extract_size: Mindestgröße der Objekte in Pixeln.
+    :param base_folder: Basisordner (z. B. TransBack oder Enhancement) – wird hier nicht mehr genutzt.
+    """
+    log_message(f"Starte Verarbeitung von {file_path} mit extract_size={extract_size}", level="info")
+
+    # Datei einlesen (mit Alphakanal)
+    img = cv2.imread(file_path, cv2.IMREAD_UNCHANGED)
+    if img is None:
+        err_msg = f"Fehler: Datei {file_path} konnte nicht geladen werden."
+        log_message(err_msg, level="error")
+        return
+
+    log_message("Datei erfolgreich geladen. Starte Verarbeitung...", level="info")
+
+    # Überprüfen, ob ein Alphakanal vorhanden ist
+    if img.shape[2] == 4:
+        alpha_channel = img[:, :, 3]
+    else:
+        err_msg = f"Das Bild {file_path} hat keinen Alphakanal."
+        log_message(err_msg, level="warning")
+        return
+
+    # Alphakanal binarisieren und Konturen finden
+    _, binary = cv2.threshold(alpha_channel, 1, 255, cv2.THRESH_BINARY)
+    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    base_name = os.path.splitext(os.path.basename(file_path))[0]
+    extracted_count = 0
+
+    for i, contour in enumerate(contours):
+        x, y, w, h = cv2.boundingRect(contour)
+        if w < extract_size or h < extract_size:
+            continue
+        cropped_img = img[y:y+h, x:x+w]
+        alpha_cropped = alpha_channel[y:y+h, x:x+w]
+        mask = cv2.threshold(alpha_cropped, 1, 255, cv2.THRESH_BINARY)[1]
+        pil_img = Image.fromarray(cv2.cvtColor(cropped_img, cv2.COLOR_BGRA2RGBA))
+        pil_img.putalpha(Image.fromarray(mask))
+
+        output_path = os.path.join(os.path.dirname(file_path), f"{i+1:02}_{base_name}.png")
+        pil_img.save(output_path)
+        extracted_count += 1
+
+        log_message(f"Objekt {i+1} gespeichert: {output_path}", level="info")
+
+    if extracted_count > 0:
+        try:
+            os.remove(file_path)
+            msg = f"{extracted_count} Objekte aus {file_path} wurden verarbeitet. Originaldatei wurde gelöscht."
+            log_message(msg, level="info")
+        except Exception as e:
+            log_message(f"Fehler beim Löschen der Originaldatei {file_path}: {str(e)}", level="error")
+    else:
+        msg = f"Keine Objekte aus {file_path} extrahiert. Originaldatei bleibt erhalten."
+        log_message(msg, level="info")
+
+# -------------------------------------------------------------------
+# Funktion für einen benutzerdefinierten Filter
+# -------------------------------------------------------------------
+def apply_custom_filter(input_path):
+    """
+    Platzhalter-Funktion für einen benutzerdefinierten Filter.
+    Hier sollte die eigentliche Filterlogik implementiert werden.
+    """
+    try:
+        image = Image.open(input_path)
+    except Exception as e:
+        log_message(f"Fehler beim Öffnen von {input_path}: {str(e)}", level="error")
+        raise
+
+    # Beispiel: Kontrast erhöhen (Anpassung nach Bedarf)
+    # enhancer = ImageEnhance.Contrast(image)
+    # image = enhancer.enhance(1.5)
+    return image
+
+# -------------------------------------------------------------------
+# --- Hauptskript ---
+# -------------------------------------------------------------------
+if __name__ == "__main__":
+    # Zusammenstellung der Ordner, die verarbeitet werden sollen (sowohl TransBack als auch Enhancement)
+    collation_folder_list = [folder for folder in [collation_folder1, collation_folder2, collation_folder5, collation_folder6] if folder is not None]
+
+    # ---------------------------
+    # 1. Objektextraktion in beiden Collation-Ordnern
+    # ---------------------------
+    for current_folder in collation_folder_list:
+        image_files = find_all_images_in_directory(current_folder)
+        if not image_files:
+            log_message(f"Keine Bilddateien in {current_folder} gefunden.", level="warning")
+        else:
+            for file_path in image_files:
+                log_message(f"Verarbeite Datei: {file_path}", level="info")
+                # Übergabe des aktuellen Basisordners an die Funktion
+                extract_objects_from_image(file_path, extract_size=extract_size, base_folder=current_folder)
+            log_message(f"Extraktion abgeschlossen in {current_folder}.", level="info")
+
+    # ---------------------------
+    # 2. Anwendung des Custom-Filters
+    #     Es werden Bilder in allen gefundenen Collation-Ordnern (TransBack und Enhancement)
+    #     verarbeitet. Das gefilterte Bild wird als neue Datei (mit Präfix "filtered_") gespeichert,
+    #     danach wird die Originaldatei gelöscht.
+    # ---------------------------
+    processed_files = 0
+
+    for current_folder in collation_folder_list:
+        for root, dirs, files in os.walk(current_folder):
+            for file in files:
+                if file.lower().endswith(output_format):
+                    input_path = os.path.join(root, file)
+                    output_path = os.path.join(root, "filtered_" + file)
+                    log_message(f"Verarbeite Datei: {file}", level="info")
+                    try:
+                        final_image = apply_custom_filter(input_path)
+                        final_image.save(output_path)
+                        # Löschen der Originaldatei nach erfolgreicher Filterung
+                        os.remove(input_path)
+                        log_message(f"Erfolgreich verarbeitet: {file}. Originaldatei wurde gelöscht.", level="info")
+                        processed_files += 1
+                    except Exception as e:
+                        log_message(f"Fehler bei {file}: {str(e)}", level="error")
+
+    log_message(f"Verarbeitung abgeschlossen! {processed_files} Bilder verarbeitet.", level="info")
+
+🐍 --- image_extractor\0skripts\ExtractGray.py ---
+import os
+import cv2
+from PIL import Image
+import shutil
+from _logger import log_message, shorten_path
+from _utils import load_settings_ini, find_latest_date_folder
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Sucht einen Collation-Ordner (z. B. "03-Whitepaper")
+# -------------------------------------------------------------------
+def find_collation_folder(date_folder, collation_name):
+    """
+    Sucht im date_folder nach einem Ordner mit dem Namen collation_name.
+    """
+    collation_folder = os.path.join(date_folder, collation_name)
+    if os.path.exists(collation_folder) and os.path.isdir(collation_folder):
+        log_message(f"Gefundener Collation-Ordner: {shorten_path(collation_folder)}", level="info")
+        return collation_folder
+    else:
+        log_message(f"Collation-Ordner '{collation_name}' nicht gefunden in {shorten_path(date_folder)}.", level="info")
+        return None
+
+# -------------------------------------------------------------------
+# Objektextraktion aus einem Bild – Graustufen-Version
+# -------------------------------------------------------------------
+def extract_objects_from_image(file_path, extract_size=10, base_collation=None):
+    """
+    Liest ein Bild (inklusive Alphakanal) ein, wandelt es zuerst in ein Graustufenbild um
+    und extrahiert dann Objekte (basierend auf dem Alphakanal). Erfolgreich extrahierte
+    Objekte werden als separate PNG-Dateien gespeichert. Nach erfolgreicher Extraktion
+    wird die Originaldatei gelöscht.
+    
+    :param file_path: Pfad zum Originalbild.
+    :param extract_size: Mindestgröße (in Pixeln) eines Objekts (aus der INI, Standard: 10).
+    :param base_collation: Basisordner, in den normalerweise das Original verschoben würde.
+    """
+    log_message(f"Starte Verarbeitung von {file_path} mit extract_size={extract_size}", level="info")
+    
+    # Bild inklusive Alphakanal einlesen
+    img = cv2.imread(file_path, cv2.IMREAD_UNCHANGED)
+    if img is None:
+        log_message(f"Fehler: Datei {file_path} konnte nicht geladen werden.", level="error")
+        return
+    
+    # Umwandlung in Graustufen (für die spätere Extraktion)
+    try:
+        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    except Exception as e:
+        log_message(f"Fehler bei der Umwandlung in Graustufen für {file_path}: {str(e)}", level="error")
+        return
+    
+    # Überprüfen, ob ein Alphakanal vorhanden ist
+    if img.shape[2] == 4:
+        alpha_channel = img[:, :, 3]
+    else:
+        log_message(f"Das Bild {file_path} hat keinen Alphakanal.", level="warning")
+        return
+    
+    # Binärisierung des Alphakanals und Suche der Konturen
+    _, binary = cv2.threshold(alpha_channel, 1, 255, cv2.THRESH_BINARY)
+    contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    
+    base_name = os.path.splitext(os.path.basename(file_path))[0]
+    output_dir = os.path.dirname(file_path)
+    extracted_count = 0
+    
+    for i, contour in enumerate(contours):
+        x, y, w, h = cv2.boundingRect(contour)
+        if w < extract_size or h < extract_size:
+            continue
+        # Auf Basis des Graustufenbildes den Bereich ausschneiden
+        cropped_img = gray_img[y:y+h, x:x+w]
+        # Ebenso den entsprechenden Bereich des Alphakanals
+        alpha_cropped = alpha_channel[y:y+h, x:x+w]
+        mask = cv2.threshold(alpha_cropped, 1, 255, cv2.THRESH_BINARY)[1]
+        pil_img = Image.fromarray(cropped_img).convert("L")
+        pil_img.putalpha(Image.fromarray(mask))
+        
+        output_path = os.path.join(output_dir, f"{i+1:02}_{base_name}.png")
+        pil_img.save(output_path)
+        extracted_count += 1
+        log_message(f"Objekt {i+1} gespeichert: {output_path}", level="info")
+    
+    if extracted_count > 0:
+        try:
+            os.remove(file_path)
+            log_message(f"{extracted_count} Objekte aus {file_path} wurden verarbeitet. Originaldatei wurde gelöscht.", level="info")
+        except Exception as e:
+            log_message(f"Fehler beim Löschen der Originaldatei {file_path}: {str(e)}", level="error")
+    else:
+        log_message(f"Keine Objekte aus {file_path} extrahiert. Originaldatei bleibt erhalten.", level="info")
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Sucht alle Bilddateien in einem Verzeichnis (inkl. Unterordner)
+# -------------------------------------------------------------------
+def find_all_images_in_directory(directory):
+    supported_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]
+    image_files = []
+    for root, _, files in os.walk(directory):
+        for file_name in files:
+            if any(file_name.lower().endswith(ext) for ext in supported_extensions):
+                image_files.append(os.path.join(root, file_name))
+    return image_files
+
+# -------------------------------------------------------------------
+# Hauptprogramm
+# -------------------------------------------------------------------
+if __name__ == "__main__":
+    # Basisverzeichnis und neuesten Datum-Ordner ermitteln
+    base_dir = os.getcwd()
+    latest_date_folder = find_latest_date_folder(base_dir)
+    
+    # Konfiguration laden (settings.ini)
+    config = load_settings_ini()
+    
+    # Aus der INI: Mindestgröße für zu extrahierende Objekte
+    try:
+        extract_size = config.getint("Settings", "extractsize")
+    except Exception:
+        extract_size = 10
+        log_message("Ungültiger Wert für Settings.extractsize, Standardwert 10 wird verwendet.", level="warning")
+    
+    # Aus der INI: Namen der Collation-Bereiche (Ordner)
+    output_foldes_collation3 = config.get("Settings", "output_foldes_collation3", fallback="Whitepaper")
+    target_collation_folder_name3 = f"03-{output_foldes_collation3}"
+    collation_folder3 = find_collation_folder(latest_date_folder, target_collation_folder_name3)
+    
+    output_foldes_collation4 = config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite")
+    target_collation_folder_name4 = f"03-{output_foldes_collation4}"
+    collation_folder4 = find_collation_folder(latest_date_folder, target_collation_folder_name4)
+    
+    # Für beide Collation-Bereiche (Whitepaper und Enhancwhite) werden die Bilder verarbeitet:
+    for collation_folder in [collation_folder3, collation_folder4]:
+        if collation_folder:
+            log_message(f"Starte Verarbeitung in Ordner: {shorten_path(collation_folder)}", level="info")
+            image_files = find_all_images_in_directory(collation_folder)
+            if not image_files:
+                log_message(f"Keine Bilddateien in {shorten_path(collation_folder)} gefunden.", level="warning")
+            else:
+                for file_path in image_files:
+                    log_message(f"Verarbeite Datei: {file_path}", level="info")
+                    extract_objects_from_image(file_path, extract_size=extract_size, base_collation=collation_folder)
+    
+    log_message("Extraktion abgeschlossen.", level="info")
+
+🐍 --- image_extractor\0skripts\Folders.py ---
+#!/usr/bin/env python3
+import os
+import shutil
+import re
+from _logger import (
+    log_message,
+    log_separator,
+    log_sub_separator,
+    shorten_path,
+    init_logger,
+    ICON_SUCCESS,
+    ICON_ERROR,
+    ICON_WARN,
+    ICON_INFO
+)
+from _utils import load_settings_ini, get_output_format, find_latest_date_folder, supported_extensions
+
+# Lade die Einstellungen über _utils.py
+config = load_settings_ini()
+output_format = get_output_format(config)
+
+def find_existing_output_folder(parent_folder):
+    """
+    Sucht im übergebenen Ordner nach dem korrekten `02-[output_format]`-Ordner.
+    Falls dieser nicht existiert, wird ein anderer Ordner, der mit "02-" beginnt, zurückgegeben.
+    """
+    preferred_folder = os.path.join(parent_folder, f"02-{output_format}")
+    
+    if os.path.exists(preferred_folder):
+        return preferred_folder
+    
+    # Falls der bevorzugte Ordner nicht existiert, suche nach irgendeinem Ordner, der mit "02-" anfängt.
+    for folder in os.listdir(parent_folder):
+        folder_path = os.path.join(parent_folder, folder)
+        if folder.startswith("02-") and os.path.isdir(folder_path):
+            log_message(f"Preferred folder '{shorten_path(preferred_folder)}' not found. Using '{folder}' instead.", level="info")
+            return folder_path
+    return None
+
+def process_existing_output_folder():
+    """
+    Verarbeitet den neuesten Datum-Ordner:
+      1. Kopiert Bilder in individuelle Unterordner im '02-[output_format]'-Ordner (für Backup und weitere Verarbeitung).
+      2. Kopiert die Bilder zusätzlich in alle '03-[output_foldes_collationX]'-Ordner, die in settings.ini definiert sind.
+    
+    Anschließend werden die Bilder aus den Unterordnern zurück in den '02-[output_format]'-Ordner verschoben
+    und die leeren Unterordner gelöscht.
+    """
+    # Arbeitsverzeichnis (Skriptverzeichnis)
+    script_dir = os.getcwd()
+    # Logger initialisieren (setzt BASE_DIRECTORY für relative Pfadangaben)
+    init_logger(script_dir)
+    
+    # Ermittle den neuesten Datum-Ordner (die _utils-Version liefert einen vollständigen Pfad)
+    latest_date_folder = find_latest_date_folder(script_dir)
+    if not latest_date_folder:
+        return  # Kein gültiger Datum-Ordner gefunden
+    
+    # Da find_latest_date_folder bereits einen absoluten Pfad liefert, verwenden wir diesen direkt
+    parent_folder = latest_date_folder
+    
+    # Finde den '02-[output_format]'-Ordner (oder einen alternativen Ordner)
+    target_folder = find_existing_output_folder(parent_folder)
+    if not target_folder:
+        log_message(f"No `02-[format]` folder found in '{shorten_path(parent_folder)}'. Please run the conversion first.", level="error")
+        return
+    
+    log_separator()
+    log_message(f"Processing images in: {shorten_path(target_folder)}", level="info")
+    
+    # Ermittle in den Einstellungen alle Schlüssel, die mit "output_foldes_collation" beginnen
+    collation_keys = [key for key in config["Settings"] if key.startswith("output_foldes_collation")]
+    collation_keys.sort()  # z. B. 1, 2, 3, ...
+    
+    # Verarbeite alle Dateien im '02-[output_format]'-Ordner
+    for filename in os.listdir(target_folder):
+        file_path = os.path.join(target_folder, filename)
+        # Überspringe Einträge, die keine Dateien sind (z. B. bereits erstellte Ordner)
+        if not os.path.isfile(file_path):
+            continue
+        
+        file_ext = os.path.splitext(filename)[1].lower().strip(".")
+        if file_ext in supported_extensions:
+            # Erstelle einen Unterordner basierend auf dem Bildnamen (ohne Endung)
+            folder_name = os.path.splitext(filename)[0]
+            image_folder_path = os.path.join(target_folder, folder_name)
+            if not os.path.exists(image_folder_path):
+                os.makedirs(image_folder_path)
+                log_message(f"Created folder: {shorten_path(image_folder_path)}", level="info")
+            
+            # Kopiere das Bild in seinen Unterordner (das Original bleibt im '02'-Ordner)
+            destination_file = os.path.join(image_folder_path, filename)
+            try:
+                shutil.copy2(file_path, destination_file)
+                log_message(f"{filename} -> {shorten_path(image_folder_path)} {ICON_SUCCESS} Copied", level="info")
+            except Exception as e:
+                log_message(f"Copy operation failed: '{shorten_path(file_path)}' -> '{shorten_path(destination_file)}': {e}", level="error")
+                continue
+            log_sub_separator()
+            
+            # Kopiere das Bild in alle '03-[output_foldes_collationX]'-Ordner, die in settings.ini definiert sind
+            for key in collation_keys:
+                collation_value = config.get("Settings", key, fallback=None)
+                if collation_value:
+                    # Zielordner erhält das Präfix "03-"
+                    collation_folder_name = f"03-{collation_value}"
+                    collation_folder_path = os.path.join(parent_folder, collation_folder_name)
+                    
+                    # Erstelle den 03-Ordner, falls er nicht existiert
+                    if not os.path.exists(collation_folder_path):
+                        os.makedirs(collation_folder_path)
+                        log_message(f"Created folder: {shorten_path(collation_folder_path)}", level="info")
+                    
+                    # Erstelle einen Unterordner für das Bild innerhalb des 03-Ordners
+                    collation_image_subfolder = os.path.join(collation_folder_path, folder_name)
+                    if not os.path.exists(collation_image_subfolder):
+                        os.makedirs(collation_image_subfolder)
+                        log_message(f"Created folder: {shorten_path(collation_image_subfolder)}", level="info")
+                    
+                    # Kopiere das Bild in den entsprechenden 03-Unterordner
+                    collation_destination_file = os.path.join(collation_image_subfolder, filename)
+                    try:
+                        shutil.copy2(file_path, collation_destination_file)
+                        log_message(f"{filename} -> {shorten_path(collation_image_subfolder)} {ICON_SUCCESS} Copied", level="info")
+                    except Exception as e:
+                        log_message(f"Copy operation failed: '{shorten_path(file_path)}' -> '{shorten_path(collation_destination_file)}': {e}", level="error")
+                    log_sub_separator()
+                    
+    # Nachdem alle Bilder kopiert wurden, werden sie aus den Unterordnern zurück in den '02-[output_format]'-Ordner verschoben und die leeren Ordner gelöscht.
+    log_separator()
+    log_message("Moving images back to 02 folder & deleting subfolders", level="info")
+    log_separator()
+    for entry in os.listdir(target_folder):
+        entry_path = os.path.join(target_folder, entry)
+        if os.path.isdir(entry_path):
+            # Verschiebe alle Dateien aus dem Unterordner in den übergeordneten '02'-Ordner
+            for subfile in os.listdir(entry_path):
+                subfile_path = os.path.join(entry_path, subfile)
+                if os.path.isfile(subfile_path):
+                    destination_path = os.path.join(target_folder, subfile)
+                    try:
+                        shutil.move(subfile_path, destination_path)
+                        log_message(f"Moved {shorten_path(subfile_path)} -> {shorten_path(destination_path)}", level="info")
+                    except Exception as e:
+                        log_message(f"Error moving {shorten_path(subfile_path)}: {e}", level="error")
+            # Lösche den nun leeren Unterordner
+            try:
+                os.rmdir(entry_path)
+                log_message(f"Deleted folder: {shorten_path(entry_path)}", level="info")
+            except Exception as e:
+                log_message(f"Error deleting folder {shorten_path(entry_path)}: {e}", level="error")
+    
+    log_separator()
+
+if __name__ == "__main__":
+    process_existing_output_folder()
+
+🐍 --- image_extractor\0skripts\Scal.py ---
+import os
+from PIL import Image
+import shutil
+
+from _logger import log_message, shorten_path
+from _utils import load_settings_ini, find_latest_date_folder
+
+# Default-Skalierungsoptionen, falls in der INI nichts definiert ist
+default_scale_options = {
+    25: (25, 25),
+    50: (50, 50),
+    70: (70, 70),
+    80: (80, 80),
+    # Weitere Skalierungsstufen können hier ergänzt werden.
+}
+
+def scale_image(file_path, scale, scale_factors, output_dir):
+    """
+    Skaliert das Bild basierend auf dem angegebenen Skalierungswert und den zugehörigen Faktoren.
+    
+    :param file_path: Pfad zum Originalbild.
+    :param scale: Skalierungswert (z.B. 75).
+    :param scale_factors: Tuple mit (x_scale, y_scale).
+    :param output_dir: Zielordner, in dem das skalierte Bild abgelegt wird.
+    """
+    log_message(f"Starte Skalierung von {shorten_path(file_path)} mit scale={scale}", level="info")
+    
+    try:
+        img = Image.open(file_path)
+    except Exception as e:
+        log_message(f"Fehler: Datei {shorten_path(file_path)} konnte nicht geladen werden: {str(e)}", level="error")
+        return
+
+    new_width = int(img.width * (scale_factors[0] / 100))
+    new_height = int(img.height * (scale_factors[1] / 100))
+    try:
+        scaled_img = img.resize((new_width, new_height), Image.LANCZOS)
+    except Exception as e:
+        log_message(f"Fehler beim Skalieren von {shorten_path(file_path)}: {str(e)}", level="error")
+        return
+    
+    os.makedirs(output_dir, exist_ok=True)
+    base_name, ext = os.path.splitext(os.path.basename(file_path))
+    new_file_name = f"{base_name}_x{scale}{ext}"
+    output_path = os.path.join(output_dir, new_file_name)
+    
+    try:
+        scaled_img.save(output_path)
+        log_message(f"Skaliertes Bild gespeichert: {shorten_path(output_path)}", level="info")
+    except Exception as e:
+        log_message(f"Fehler beim Speichern des Bildes {shorten_path(output_path)}: {str(e)}", level="error")
+
+def main():
+    # INI laden und Basisordner ermitteln
+    config = load_settings_ini()
+    base_dir = os.getcwd()
+    latest_date_folder = find_latest_date_folder(base_dir)
+    
+    # Skalierungsgrenzen aus der INI lesen (Abschnitt [Scaling])
+    max_upscale = config.getint("Scaling", "max_upscale", fallback=200)
+    max_downscale = config.getint("Scaling", "max_downscale", fallback=25)
+    log_message(f"Skalierungsgrenzen: max_upscale={max_upscale}, max_downscale={max_downscale}", level="info")
+    
+    # Skalierungsoptionen aus der INI lesen
+    try:
+        active_scales_str = config.get("Scaling", "active_scales", fallback="25,50,75,150")
+        active_scales = [int(x.strip()) for x in active_scales_str.split(",") if x.strip().isdigit()]
+    except Exception as e:
+        log_message(f"Fehler beim Laden der aktiven Skalierungsstufen: {str(e)}", level="warning")
+        active_scales = list(default_scale_options.keys())
+    
+    # Skalierungsoptionen aus der INI oder Standardwerte verwenden
+    scale_options = {}
+    if config.has_option("Scaling", "scale_options"):
+        scale_options_str = config.get("Scaling", "scale_options", fallback="")
+        if scale_options_str:
+            try:
+                # Erwartetes Format: "25:25,25;50:50,50;75:75,75;150:150,150"
+                for item in scale_options_str.split(";"):
+                    item = item.strip()
+                    if not item:
+                        continue
+                    key_part, val_part = item.split(":")
+                    key = int(key_part.strip())
+                    val_tuple = tuple(int(x.strip()) for x in val_part.split(","))
+                    scale_options[key] = val_tuple
+            except Exception as e:
+                log_message(f"Fehler beim Parsen von scale_options: {str(e)}", level="warning")
+                scale_options = default_scale_options
+        else:
+            scale_options = default_scale_options
+    else:
+        scale_options = default_scale_options
+
+    # Filtere nur Skalierungsstufen, die innerhalb der definierten Grenzen liegen
+    active_scales = [s for s in active_scales if s >= max_downscale and s <= max_upscale]
+    if not active_scales:
+        log_message("Keine gültigen Skalierungsstufen innerhalb der definierten Grenzen gefunden. Beende das Programm.", level="warning")
+        return
+    
+    # Ermitteln der Collation‑Ordner (output_foldes_collationX) aus [Settings]
+    collation_folders = []
+    for key in config.options("Settings"):
+        if key.startswith("output_foldes_collation"):
+            folder_name = config.get("Settings", key)
+            target_folder_name = f"03-{folder_name}"
+            coll_folder = os.path.join(latest_date_folder, target_folder_name)
+            if os.path.exists(coll_folder) and os.path.isdir(coll_folder):
+                log_message(f"Gefundener Collation-Ordner: {shorten_path(coll_folder)}", level="info")
+                collation_folders.append(coll_folder)
+            else:
+                log_message(f"Collation-Ordner '{target_folder_name}' nicht gefunden in {shorten_path(latest_date_folder)}.", level="info")
+    
+    if not collation_folders:
+        log_message("Keine gültigen Collation-Ordner gefunden. Beende das Programm.", level="error")
+        return
+
+    # Liste unterstützter Bildformate
+    supported_extensions = [".png", ".jpg", ".jpeg", ".bmp", ".tiff"]
+
+    # Rekursive Suche in jedem Collation‑Ordner
+    for coll_folder in collation_folders:
+        log_message(f"Starte Skalierung in Ordner: {shorten_path(coll_folder)}", level="info")
+        # Durchlaufe alle Unterordner rekursiv
+        for root, dirs, files in os.walk(coll_folder):
+            # Falls der aktuelle Ordner ein Ausgabeordner (z. B. "x25") ist, überspringen
+            if os.path.basename(root) in [f"x{scale}" for scale in active_scales]:
+                continue
+
+            # Damit wir nicht in bereits erstellte Ausgabeordner (x{scale}) hineinlaufen,
+            # entfernen wir diese aus der weiteren Suche.
+            dirs[:] = [d for d in dirs if d not in [f"x{scale}" for scale in active_scales]]
+            
+            for file in files:
+                if any(file.lower().endswith(ext) for ext in supported_extensions):
+                    file_path = os.path.join(root, file)
+                    # Für jeden Skalierungswert: Ausgabeordner im selben Verzeichnis (relativ zum Bild) anlegen
+                    for scale in active_scales:
+                        scale_output_dir = os.path.join(root, f"x{scale}")
+                        os.makedirs(scale_output_dir, exist_ok=True)
+                        log_message(f"Verarbeite Datei: {shorten_path(file_path)} für Skalierung {scale}x", level="info")
+                        scale_image(file_path, scale, scale_options[scale], scale_output_dir)
+    
+    log_message("Skalierung abgeschlossen.", level="info")
+
+if __name__ == "__main__":
+    main()
+
+🐍 --- image_extractor\0skripts\TransBack.py ---
+#----------------------------------------------------------
+# Logdatei aktivieren        (log_enabled):
+#     True =               Logging wird aktiviert
+#     False =              Logging wird deaktiviert
+#----------------------------------------------------------
+# Mindestobjektgröße        (tolerance):
+#     Höhere Werte =       weniger kleine Objekte
+#     Niedrigere Werte =   mehr Details erhalten
+#     Empfohlener Bereich: 5-50
+#----------------------------------------------------------
+# Untere Canny-Schwelle     (canny_threshold1):
+#     Niedrigere Werte =   mehr Kanten erkannt
+#     Höhere Werte =       weniger Hintergrundrauschen
+#     Empfohlener Bereich: 50-150
+#----------------------------------------------------------
+# Obere Canny-Schwelle      (canny_threshold2):
+#     Höhere Werte =       weniger Kanten erkannt
+#     Niedrigere Werte =   sensitivere Kantenerkennung
+#     Empfohlener Bereich: 150-300
+#----------------------------------------------------------
+# Kernelgröße               (kernel_size):
+#     Größere Werte =      stärkere Maskenausdehnung
+#     Kleinere Werte =     präzisere Maskenbegrenzung
+#     Empfohlener Bereich: 3-7
+#----------------------------------------------------------
+# Dilatations-Iterationen   (iterations):
+#     Höhere Werte =       stärkere Maskenvergrößerung
+#     Niedrigere Werte =   subtilere Anpassung
+#     Empfohlener Bereich: 1-3
+#----------------------------------------------------------
+# Gewichtungsfaktor         (weight_factor):
+#     Höhere Werte =       stärkere Dunkelpriorisierung
+#     Niedrigere Werte =   ausgewogenere Schwellenwerte
+#     Empfohlener Bereich: 0.7-0.9
+#----------------------------------------------------------
+# Schwellenoffset           (dark_threshold_offset):
+#     Höhere Werte =       weniger dunkle Bereiche
+#     Niedrigere Werte =   mehr dunkle Elemente
+#     Empfohlene Anpassung: ±25
+#----------------------------------------------------------
+# Mindest-Icongröße         (min_icon_size):
+#     Höhere Werte =       Filterung kleiner Objekte
+#     Niedrigere Werte =   Beibehaltung kleiner Details
+#     Empfohlener Bereich: 100-1000
+#----------------------------------------------------------
+# =====================================================================================
+# KONFIGURATION
+# =====================================================================================
+#!/usr/bin/env python3
+import os
+import re
+import configparser
+import numpy as np
+import cv2
+from PIL import Image
+from _logger import log_message, shorten_path  # Zentrale Logging-Funktion und Hilfsfunktion
+from _utils import load_settings_ini, get_output_format, find_latest_date_folder
+
+# -------------------------------------------------------------------
+# Bildverarbeitungsfunktionen (Transparenter Hintergrund)
+# -------------------------------------------------------------------
+def calculate_dark_threshold(gray_image):
+    """
+    Berechnet den dynamischen Schwellenwert für dunkle Bereiche basierend auf
+    weight_factor und dark_threshold_offset aus der INI.
+    """
+    min_b = np.min(gray_image)
+    max_b = np.max(gray_image)
+    calculated = min_b + weight_factor * (max_b - min_b)
+    return int(calculated + dark_threshold_offset)
+
+def process_image(img_path, output_path):
+    """
+    Verarbeitet ein einzelnes Bild:
+      - Berechnet eine dunkle Bereichsmaske und ermittelt Kanten
+      - Filtert Konturen, die kleiner als min_icon_size sind
+      - Wendet die resultierende Maske an, sodass nicht erkannte Bereiche transparent werden
+      - Speichert das Ergebnis als RGBA-Bild (überschreibt das Original im Zielordner)
+    """
+    try:
+        with Image.open(img_path).convert("RGBA") as img:
+            np_img = np.array(img)
+            # Erzeuge ein Graustufenbild (RGB-Konvertierung notwendig für cv2)
+            gray = cv2.cvtColor(np.array(img.convert("RGB")), cv2.COLOR_RGB2GRAY)
+            
+            # Dunkelbereichsmaskierung
+            dark_threshold = calculate_dark_threshold(gray)
+            _, dark_mask = cv2.threshold(gray, dark_threshold, 255, cv2.THRESH_BINARY_INV)
+            
+            # Kantenerkennung
+            edges = cv2.Canny(gray, canny_threshold1, canny_threshold2)
+            
+            # Maskenoptimierung: Dilatation
+            kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
+            edges_dilated = cv2.dilate(edges, kernel, iterations=iterations)
+            
+            # Kombinierte Maske aus dunkler Maske und Kanten
+            combined_mask = cv2.bitwise_and(dark_mask, edges_dilated)
+            contours, _ = cv2.findContours(combined_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            filtered_mask = np.zeros_like(combined_mask)
+            for cnt in contours:
+                if cv2.contourArea(cnt) > min_icon_size:
+                    cv2.drawContours(filtered_mask, [cnt], -1, 255, thickness=cv2.FILLED)
+            
+            # Transparenz anwenden: Pixel außerhalb der Maske werden transparent
+            np_img[filtered_mask == 0] = (0, 0, 0, 0)
+            Image.fromarray(np_img, "RGBA").save(output_path)
+            
+            log_message(f"Erfolgreich verarbeitet: {os.path.basename(img_path)}", level="info")
+            return True
+    except Exception as e:
+        log_message(f"Fehler bei {os.path.basename(img_path)}: {str(e)}", level="error")
+        return False
+
+# -------------------------------------------------------------------
+# Hilfsfunktion: Collation-Ordner suchen
+# -------------------------------------------------------------------
+def find_collation_folder(date_folder, collation_name):
+    """
+    Sucht innerhalb des date_folder nach einem Ordner mit dem Namen, z. B.
+    "03-TransBack" (bzw. dem jeweiligen Wert aus der settings.ini).
+    Wird der Ordner gefunden, so wird er zurückgegeben, ansonsten wird das Skript beendet.
+    """
+    collation_folder = os.path.join(date_folder, collation_name)
+    if os.path.exists(collation_folder) and os.path.isdir(collation_folder):
+        log_message(f"Gefundener Collation-Ordner: {shorten_path(collation_folder)}", level="info")
+        return collation_folder
+    else:
+        log_message(f"Collation-Ordner '{collation_name}' nicht gefunden in {shorten_path(date_folder)}. Skript wird beendet.", level="error")
+        exit(1)
+
+# -------------------------------------------------------------------
+# STARTRUTINE
+# -------------------------------------------------------------------
+log_message("Starte Bildverarbeitung...", level="info")
+
+# Arbeitsverzeichnis (wo das Skript ausgeführt wird)
+base_dir = os.getcwd()
+
+# 1. Finde den neuesten Datum-Ordner (über _utils.py)
+latest_date_folder = find_latest_date_folder(base_dir)
+
+# 2. SETTINGS.INI laden (über _utils.py)
+config = load_settings_ini()
+log_message("Lade settings.ini", level="info")
+
+# 3. Ausgabeformat ermitteln (über _utils.py)
+output_format = get_output_format(config)  # z.B. ".png"
+if not output_format.startswith("."):
+    output_format = "." + output_format
+output_format = output_format.lower()
+
+# 4. Zusätzliche Bildverarbeitungs-Einstellungen aus der INI
+def get_int(section, key, default):
+    try:
+        return config.getint(section, key)
+    except (ValueError, KeyError):
+        log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+        return default
+
+def get_float(section, key, default):
+    try:
+        return config.getfloat(section, key)
+    except (ValueError, KeyError):
+        log_message(f"Ungültiger Wert für {section}.{key}, Standard ({default}) wird verwendet.", level="warning")
+        return default
+
+# Die Parameter-Namen müssen mit deinen Einträgen in der settings.ini übereinstimmen
+min_icon_size         = get_int("Settings", "min_icon_size", 100)
+kernel_size           = get_int("Settings", "kernel_size", 12)
+iterations            = get_int("Settings", "iterations", 1)
+weight_factor         = get_float("Settings", "weight_factor", 0.45)
+dark_threshold_offset = get_int("Settings", "dark_threshold_offset", 45)
+canny_threshold1      = get_int("Settings", "canny_threshold1", 32)
+canny_threshold2      = get_int("Settings", "canny_threshold2", 155)
+
+# 5. Alle Output-Folder Collation-Einträge aus settings.ini sammeln
+collation_folder_list = []
+for key in config["Settings"]:
+    if key.startswith("output_foldes_collation"):
+        collation_value = config.get("Settings", key, fallback="TransBack")
+        target_collation_folder_name = f"03-{collation_value}"
+        folder = find_collation_folder(latest_date_folder, target_collation_folder_name)
+        collation_folder_list.append(folder)
+
+if not collation_folder_list:
+    log_message("Keine Collation-Ordner in settings.ini gefunden. Skript wird beendet.", level="error")
+    exit(1)
+
+# 6. Ausgabe der aktuellen Einstellungen (optional)
+log_message("\n==================== AKTUELLE EINSTELLUNGEN ====================", level="info")
+log_message(f"Logging aktiviert: {config.getboolean('Settings', 'logging_enabled', fallback=True)}", level="info")
+log_message(f"Ausgabeformat: {output_format}", level="info")
+log_message(f"Mindestobjektgröße: {min_icon_size}px", level="info")
+log_message(f"Kernelgröße: {kernel_size}", level="info")
+log_message(f"Dilatations-Iterationen: {iterations}", level="info")
+log_message(f"Gewichtungsfaktor: {weight_factor}", level="info")
+log_message(f"Schwellenoffset: {dark_threshold_offset}", level="info")
+log_message(f"Canny-Schwellenwerte: {canny_threshold1} - {canny_threshold2}", level="info")
+log_message("Gefundene Collation-Ordner:", level="info")
+for folder in collation_folder_list:
+    log_message(f"   {shorten_path(folder)}", level="info")
+log_message("==============================================================\n", level="info")
+
+# -------------------------------------------------------------------
+# VERARBEITUNG DER BILDER in allen Collation-Ordnern
+# -------------------------------------------------------------------
+total_processed = 0
+for collation_folder in collation_folder_list:
+    log_message(f"Verarbeite Bilder in Collation-Ordner: {shorten_path(collation_folder)}", level="info")
+    for root, dirs, files in os.walk(collation_folder):
+        for file in files:
+            if file.lower().endswith(output_format):
+                input_path = os.path.join(root, file)
+                # Da wir die Bilder in den Collation-Ordnern bearbeiten wollen, wird das Bild an derselben Stelle überschrieben.
+                output_path = os.path.join(root, file)
+                log_message(f"Verarbeite Datei: {file}", level="info")
+                if process_image(input_path, output_path):
+                    total_processed += 1
+
+log_message(f"Verarbeitung abgeschlossen! {total_processed} Bilder verarbeitet.", level="info")
+
+🐍 --- image_extractor\0skripts\_logger.py ---
+import logging
+import configparser
+import os
+import textwrap
+from datetime import datetime
+
+# === SETTINGS EINLESEN AUS [LOGGER] ===
+config = configparser.ConfigParser()
+config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "settings.ini")
+if not os.path.exists(config_path):
+    raise FileNotFoundError("[ERROR] settings.ini not found!")
+config.read(config_path)
+
+def get_boolean(config, section, key, default=False):
+    """Sichere Methode, um einen Boolean-Wert aus der INI-Datei zu laden."""
+    try:
+        value = config.get(section, key).strip().lower()
+        if value in ["true", "1", "yes", "on"]:
+            return True
+        elif value in ["false", "0", "no", "off"]:
+            return False
+        else:
+            print(f"[WARN] Ungültiger Wert für {section}.{key}: '{value}', verwende Default ({default}).")
+            return default
+    except (ValueError, KeyError):
+        print(f"[WARN] Schlüssel {section}.{key} fehlt oder ist ungültig, verwende Default ({default}).")
+        return default
+
+# Logger-spezifische Einstellungen aus [LOGGER]
+logger_folder   = get_boolean(config, "LOGGER", "logger_folder", default=False)
+logging_enabled = get_boolean(config, "LOGGER", "logging_enabled", default=True)
+console_output  = get_boolean(config, "LOGGER", "console_output", default=True)
+
+# Globaler Fehler-Logger und Lazy-Initialization für Logging
+_error_logger = None
+logging_initialized = False
+
+def initialize_logging():
+    """Initialisiert die Logging-Konfiguration (lazy)."""
+    global logging_initialized
+    if not logging_initialized:
+        base_logger_dir = os.getcwd()  # Basisordner: Arbeitsverzeichnis
+        if logger_folder:
+            # Erstelle den Ordner _log falls er nicht existiert
+            log_dir = os.path.join(base_logger_dir, "_log")
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+            log_file_path = os.path.join(log_dir, "log.txt")
+        else:
+            log_file_path = os.path.join(base_logger_dir, "log.txt")
+        logging.basicConfig(
+            filename=log_file_path,
+            level=logging.INFO,
+            format="%(asctime)s - %(message)s",
+            encoding="utf-8"
+        )
+        logging_initialized = True
+
+def get_error_logger():
+    """
+    Initialisiert und liefert einen Error-Logger, der für Warnungen, Errors und Deletes genutzt wird.
+    Dieser Logger schreibt in error_log.txt.
+    """
+    global _error_logger
+    if _error_logger is None:
+        base_logger_dir = os.getcwd()
+        if logger_folder:
+            log_dir = os.path.join(base_logger_dir, "_log")
+            if not os.path.exists(log_dir):
+                os.makedirs(log_dir)
+            error_log_path = os.path.join(log_dir, "error_log.txt")
+        else:
+            error_log_path = os.path.join(base_logger_dir, "error_log.txt")
+        _error_logger = logging.getLogger("error_logger")
+        _error_logger.propagate = False
+        _error_logger.setLevel(logging.INFO)
+        handler = logging.FileHandler(error_log_path, encoding="utf-8")
+        handler.setFormatter(logging.Formatter("%(asctime)s - %(message)s"))
+        _error_logger.addHandler(handler)
+    return _error_logger
+
+# **ASCII-Symbole für Log-Level**
+ICON_SUCCESS = "[OK]"
+ICON_ERROR   = "[ERROR]"
+ICON_WARN    = "[WARN]"
+ICON_INFO    = "[INFO]"
+ICON_DELETE  = "[DELETE]"
+ICON_ARROW   = "->"
+
+# **Basisverzeichnis für relative Pfade**
+BASE_DIRECTORY = None
+
+def init_logger(base_directory):
+    """Initialisiert das Logging und speichert das Basisverzeichnis für verkürzte Pfade."""
+    global BASE_DIRECTORY
+    BASE_DIRECTORY = base_directory
+
+    # Sicherstellen, dass die Logging-Konfiguration initialisiert wird
+    if logging_enabled:
+        if not logging_initialized:
+            initialize_logging()
+        log_separator()
+        log_message("Working directory:", level="info")
+        log_message(BASE_DIRECTORY, level="info")
+        log_separator()
+    # Unabhängig von logging_enabled: Error-Logger initialisieren,
+    # damit error_log.txt immer erstellt wird
+    get_error_logger()
+
+def shorten_path(path, max_length=45):
+    """
+    Verkürzt lange Dateipfade mit "..." und zeigt sie relativ zu BASE_DIRECTORY an.
+    """
+    if BASE_DIRECTORY and path.startswith(BASE_DIRECTORY):
+        relative_path = os.path.relpath(path, BASE_DIRECTORY)
+        result = os.path.join("...", relative_path)
+    else:
+        result = path
+
+    if len(result) > max_length:
+        part_length = (max_length - 3) // 2
+        result = f"{result[:part_length]}...{result[-part_length:]}"
+    return result
+
+def shorten_path_last_n(path, n=4):
+    """Verkürzt den Pfad, sodass nur die letzten n Verzeichnisse + Dateiname angezeigt werden."""
+    path_parts = path.split(os.sep)
+    if len(path_parts) > n:
+        return os.path.join("...", *path_parts[-n:])
+    return path  # Ist der Pfad kurz genug, unverändert zurückgeben
+
+def format_log_message(message):
+    """Formatiert lange Log-Nachrichten (max. 90 Zeichen pro Zeile)."""
+    return "\n".join(textwrap.wrap(message, width=90))
+
+def log_message(message, level=None):
+    """
+    Schreibt eine Nachricht in den Hauptlog (z. B. log.txt).
+    Wird ein Log-Level angegeben, erscheint ein entsprechendes Symbol vorangestellt.
+    Zusätzlich werden Meldungen der Typen "warning", "error" und "delete"
+    an den Error-Logger weitergeleitet (und somit in error_log.txt geschrieben).
+    
+    Anpassung:
+      - Fehler-, Warn- und Löschmeldungen (also level "warning", "error", "delete")
+        werden immer in der Konsole ausgegeben – auch wenn der normale Konsolenoutput ausgeschaltet ist.
+      - Meldungen ohne diese Level (also Info-Meldungen) werden **nicht** in der Konsole ausgegeben,
+        sofern console_output deaktiviert ist.
+    """
+    if logging_enabled and not logging_initialized:
+        initialize_logging()
+
+    formatted_message = format_log_message(message)
+
+    # Zuordnung der Icons zu den Log-Levels:
+    log_levels = {
+        "info": ICON_INFO,
+        "warning": ICON_WARN,
+        "error": ICON_ERROR,
+        "delete": ICON_DELETE
+    }
+
+    if level is None:
+        log_entry = formatted_message
+    else:
+        log_entry = f"{log_levels.get(level, ICON_INFO)} {formatted_message}"
+
+    # Schreibe in den Hauptlog (z. B. log.txt), sofern aktiviert.
+    if logging_enabled:
+        logging.info(log_entry)
+
+    # Bei Warnungen, Errors und Deletes immer in den Error-Logger schreiben und ausgeben:
+    if level in ["warning", "error", "delete"]:
+        get_error_logger().info(log_entry)
+        print(log_entry)
+    # Bei Info-Meldungen (oder ohne Level) abhängig vom console_output:
+    elif console_output:
+        print(log_entry)
+
+def log_separator():
+    """Fügt eine Trennlinie in den Log (und ggf. in der Konsole) ein."""
+    log_message("-" * 66, level="info")
+
+def log_sub_separator():
+    """Fügt eine Untertrennlinie in den Log ein (z. B. zur Gruppierung von Dateioperationen)."""
+    log_message("- " * 33, level="info")
+
+# === Beispielhafte Nutzung ===
+if __name__ == "__main__":
+    # Logger initialisieren mit dem aktuellen Arbeitsverzeichnis.
+    init_logger(os.getcwd())
+
+    log_message("Dies ist eine normale Info-Nachricht.", level="info")
+    log_message("Dies ist eine Warnung!", level="warning")
+    log_message("Dies ist eine Fehlernachricht!", level="error")
+    log_message("Dies ist eine Löschmeldung.", level="delete")
+    log_message("Noch eine Info ohne Level.")
+
+    # Der Block zur Bestätigung der Enter-Taste wurde entfernt.
+
+🐍 --- image_extractor\0skripts\_utils.py ---
+#!/usr/bin/env python3
+import os
+import re
+import configparser
+from _logger import log_message, shorten_path  # _logger übernimmt bereits die Log-Level
+
+# ----------------------------------------------------------
+# Einstellungen laden und verarbeiten (settings.ini)
+# ----------------------------------------------------------
+
+def load_settings_ini(ini_filename="settings.ini"):
+    """
+    Lädt die settings.ini aus dem gleichen Verzeichnis wie dieses Skript.
+    Falls die INI-Datei nicht gefunden wird, wird das Skript beendet.
+    """
+    config = configparser.ConfigParser()
+    config_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ini_filename)
+    if not os.path.exists(config_path):
+        log_message(f"settings.ini not found: {shorten_path(config_path)}", level="error")
+        exit(1)
+    config.read(config_path)
+    log_message(f"settings.ini loaded: {shorten_path(config_path)}", level="info")
+    return config
+
+def get_output_format(config):
+    """
+    Liest aus der geladenen settings.ini das gewünschte Output-Format aus.
+    Falls nicht gesetzt, wird '.png' als Standard verwendet.
+    """
+    output_format = config.get("Settings", "output_format", fallback=".png").lower().strip(".")
+    log_message(f"Output format: {output_format}", level="info")
+    return output_format
+
+# ----------------------------------------------------------
+# Suche nach dem neuesten Datum-Ordner
+# ----------------------------------------------------------
+
+def find_latest_date_folder(search_dir):
+    """
+    Sucht im search_dir nach Ordnern, deren Name dem Muster JJMMTT oder JJMMTT_XX entspricht,
+    und liefert den (alphabetisch) letzten zurück.
+    
+    Nutzt _logger.log_message und _logger.shorten_path zur Protokollierung.
+    """
+    log_message(f"Searching for date folders in: {shorten_path(search_dir)}", level="info")
+    
+    try:
+        entries = os.listdir(search_dir)
+    except Exception as e:
+        log_message(f"Could not read directory {search_dir}: {e}", level="error")
+        exit(1)
+    
+    date_folders = sorted(
+        [d for d in entries 
+         if os.path.isdir(os.path.join(search_dir, d)) and re.match(r"^\d{6}(_\d{2})?$", d)],
+        reverse=True
+    )
+    
+    log_message(f"Found date folders: {date_folders}", level="info")
+    
+    if not date_folders:
+        log_message("No valid date folder (JJMMTT or JJMMTT_XX) found. Exiting.", level="error")
+        exit(1)
+    
+    latest_folder = os.path.join(search_dir, date_folders[0])
+    log_message(f"Selected latest date folder: {shorten_path(latest_folder)}", level="info")
+    return latest_folder
+
+# ----------------------------------------------------------
+# Unterstützte Dateiformate
+# ----------------------------------------------------------
+supported_extensions = ['png', 'jpg', 'jpeg', 'bmp', 'tiff', 'webp']
+
+🐍 --- src\__init__.py ---
+
+🐍 --- src\app.py ---
+
+🐍 --- src\blueprints\extractor.py ---
+
+🌐 --- templates\base.html ---
+
+🌐 --- templates\index.html ---
+
+🌐 --- templates\login.html ---
+
+🌐 --- templates\register.html ---
+
+🐍 --- tests\test_convert.py ---
+
+🐍 --- tests\test_extract.py ---
+
+🐍 --- tests\test_routes.py ---
+

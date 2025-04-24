@@ -22,7 +22,7 @@ def find_collation_folder(date_folder, collation_name):
     else:
         log_message(f"Collation-Ordner '{collation_name}' nicht gefunden in {shorten_path(date_folder)}.", level="info")
         return None
- 
+
 # -------------------------------------------------------------------
 # STARTRUTINE
 # -------------------------------------------------------------------
@@ -73,13 +73,13 @@ output_foldes_collation2 = config.get("Settings", "output_foldes_collation2", fa
 target_collation_folder_name2 = f"03-{output_foldes_collation2}"
 collation_folder2 = find_collation_folder(latest_date_folder, target_collation_folder_name2)
 
-#    Ordner 5: CleanUp
-output_foldes_collation5 = config.get("Settings", "output_foldes_collation5", fallback="CleanUp")
+#    Ordner 5: Enhanclean
+output_foldes_collation5 = config.get("Settings", "output_foldes_collation5", fallback="Enhanclean")
 target_collation_folder_name5 = f"03-{output_foldes_collation5}"
 collation_folder5 = find_collation_folder(latest_date_folder, target_collation_folder_name5)
 
-#    Ordner 6: TransBack-2
-output_foldes_collation6 = config.get("Settings", "output_foldes_collation6", fallback="CleanUp")
+#    Ordner 6: Transclean
+output_foldes_collation6 = config.get("Settings", "output_foldes_collation6", fallback="Transclean")
 target_collation_folder_name6 = f"03-{output_foldes_collation6}"
 collation_folder6 = find_collation_folder(latest_date_folder, target_collation_folder_name6)
 
@@ -111,7 +111,7 @@ def extract_objects_from_image(file_path, extract_size=10, base_folder=None):
     """
     Extrahiert einzelne Objekte aus einem Bild und speichert sie als separate PNG-Dateien.
     Nach erfolgreicher Extraktion wird die Originaldatei gelöscht.
-    
+
     :param file_path: Pfad zum Originalbild.
     :param extract_size: Mindestgröße der Objekte in Pixeln.
     :param base_folder: Basisordner (z. B. TransBack oder Enhancement) – wird hier nicht mehr genutzt.

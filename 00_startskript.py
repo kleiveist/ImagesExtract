@@ -10,10 +10,10 @@ def find_0skripts_directory(start_path):
         possible_path = os.path.join(current_path, "0Skripts")
         if os.path.exists(possible_path):
             return possible_path  # `0Skripts` wurde gefunden!
-        
+
         # Falls Root-Verzeichnis erreicht, abbrechen
         parent_path = os.path.dirname(current_path)
-        if parent_path == current_path:  
+        if parent_path == current_path:
             return None  # `0Skripts` nicht gefunden
         current_path = parent_path  # Eine Ebene nach oben gehen
 
@@ -52,15 +52,15 @@ valueOn = ["true", "1", "yes", "on"]
 valueOff = ["false", "0", "no", "off"]
 
 # **7. DEFINE SCRIPT PATHS**
-part_script1 = os.path.join(script_directory, "01_ConvertWebp.py")
-part_script2 = os.path.join(script_directory, "02_Folders.py")
-part_script3 = os.path.join(script_directory, "03_Enhancement.py")
-part_script4 = os.path.join(script_directory, "03_TransBack.py")
-part_script5 = os.path.join(script_directory, "04_Extract.py")
-part_script6 = os.path.join(script_directory, "04_ExtractGray.py")
-part_script7 = os.path.join(script_directory, "05_CleanUp.py")
-part_script8 = os.path.join(script_directory, "06_Scal.py")
-part_script9 = os.path.join(script_directory, "07_Collation.py")
+part_script1 = os.path.join(script_directory, "ConvertWebp.py")
+part_script2 = os.path.join(script_directory, "Folders.py")
+part_script3 = os.path.join(script_directory, "Enhancement.py")
+part_script4 = os.path.join(script_directory, "TransBack.py")
+part_script5 = os.path.join(script_directory, "Extract.py")
+part_script6 = os.path.join(script_directory, "ExtractGray.py")
+part_script7 = os.path.join(script_directory, "CleanUp.py")
+part_script8 = os.path.join(script_directory, "Scal.py")
+part_script9 = os.path.join(script_directory, "Collation.py")
 # part_script6 = os.path.join(script_directory, "Modu6.py")
 
 # **8. INITIALIZE LOGGER**
@@ -71,15 +71,15 @@ log_message(f"Starting test script in: {shorten_path_last_n(current_test_directo
 
 # **9. DEFINE SCRIPTS TO RUN WITH CONFIGURATION CHECK**
 scripts_to_run = [
-    ("01_ConvertWebp.py", part_script1),
-    ("02_Folders.py", part_script2),
-    ("03_Enhancement.py", part_script3),
-    ("03_TransBack.py", part_script4),
-    ("04_Extract.py", part_script5),
-    ("04_ExtractGray.py", part_script6),
-    ("05_CleanUp.py", part_script7),
-    ("06_Scal.py", part_script8),
-    ("07_Collation.py", part_script9)
+    ("ConvertWebp.py", part_script1),
+    ("Folders.py", part_script2),
+    ("Enhancement.py", part_script3),
+    ("TransBack.py", part_script4),
+    ("Extract.py", part_script5),
+    ("ExtractGray.py", part_script6),
+    ("CleanUp.py", part_script7),
+    ("Scal.py", part_script8),
+    ("Collation.py", part_script9)
     # ("Modul6.py", part_script6)
 ]
 
@@ -96,9 +96,9 @@ for script_name, script_path in scripts_to_run:
     if not os.path.exists(script_path):
         log_message(f"{script_name} not found! Script will terminate.", level="error")
         sys.exit(1)
-    
+
     log_message(f"Launching script: {shorten_path_last_n(script_path, 2)}", level="info")
-    
+
     try:
         # Starte das Skript mit dem aktuellen Testverzeichnis als Argument
         subprocess.run(["python", script_path, current_test_directory], check=True)

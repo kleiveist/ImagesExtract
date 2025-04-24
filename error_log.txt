@@ -1,0 +1,9 @@
+2025-04-24 19:57:24,703 - [ERROR] Script CleanUp.py execution failed: Command '['python',
+'X:\\Blobbite\\P25Images_extract\\ImagesExtract\\0Skripts\\CleanUp.py',
+'X:\\Blobbite\\P25Images_extract\\ImagesExtract']' returned non-zero exit status 1.
+2025-04-24 19:58:37,510 - [ERROR] Script CleanUp.py execution failed: Command '['python',
+'X:\\Blobbite\\P25Images_extract\\ImagesExtract\\0Skripts\\CleanUp.py',
+'X:\\Blobbite\\P25Images_extract\\ImagesExtract']' returned non-zero exit status 1.
+2025-04-24 20:00:10,292 - [ERROR] Script CleanUp.py execution failed: Command '['python',
+'X:\\Blobbite\\P25Images_extract\\ImagesExtract\\0Skripts\\CleanUp.py',
+'X:\\Blobbite\\P25Images_extract\\ImagesExtract']' returned non-zero exit status 1.

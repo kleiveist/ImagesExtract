@@ -82,18 +82,18 @@ def process_image(img_path, output_path):
             np_img = np.array(img)
             # Erzeuge ein Graustufenbild (RGB-Konvertierung notwendig für cv2)
             gray = cv2.cvtColor(np.array(img.convert("RGB")), cv2.COLOR_RGB2GRAY)
-            
+
             # Dunkelbereichsmaskierung
             dark_threshold = calculate_dark_threshold(gray)
             _, dark_mask = cv2.threshold(gray, dark_threshold, 255, cv2.THRESH_BINARY_INV)
-            
+
             # Kantenerkennung
             edges = cv2.Canny(gray, canny_threshold1, canny_threshold2)
-            
+
             # Maskenoptimierung: Dilatation
             kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE, (kernel_size, kernel_size))
             edges_dilated = cv2.dilate(edges, kernel, iterations=iterations)
-            
+
             # Kombinierte Maske aus dunkler Maske und Kanten
             combined_mask = cv2.bitwise_and(dark_mask, edges_dilated)
             contours, _ = cv2.findContours(combined_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -101,11 +101,11 @@ def process_image(img_path, output_path):
             for cnt in contours:
                 if cv2.contourArea(cnt) > min_icon_size:
                     cv2.drawContours(filtered_mask, [cnt], -1, 255, thickness=cv2.FILLED)
-            
+
             # Transparenz anwenden: Pixel außerhalb der Maske werden transparent
             np_img[filtered_mask == 0] = (0, 0, 0, 0)
             Image.fromarray(np_img, "RGBA").save(output_path)
-            
+
             log_message(f"Erfolgreich verarbeitet: {os.path.basename(img_path)}", level="info")
             return True
     except Exception as e:
@@ -127,7 +127,6 @@ def find_collation_folder(date_folder, collation_name):
         return collation_folder
     else:
         log_message(f"Collation-Ordner '{collation_name}' nicht gefunden in {shorten_path(date_folder)}. Skript wird beendet.", level="error")
-        exit(1)
 
 # -------------------------------------------------------------------
 # STARTRUTINE

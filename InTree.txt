@@ -1,19 +1,42 @@
-ImagesExtract
-├── .gitignore
-├── 00_startskript.py
-├── 0skripts/
-│   ├── 01_ConvertWebp.py
-│   ├── 02_Folders.py
-│   ├── 03_Enhancement.py
-│   ├── 03_TransBack.py
-│   ├── 04_Extract.py
-│   ├── 04_ExtractGray.py
-│   ├── 05_CleanUp.py
-│   ├── 06_Scal.py
-│   ├── 07_Collation.py
-│   ├── _logger.py
-│   ├── _utils.py
-│   └── settings.ini
-├── 250118__ar_farm_04.png
-├── InTree.py
-└── InTree.txt
+📂 ImagesExtract
+├── 📝 .gitignore
+├── 📝 InContent.txt
+├── 📝 README.md
+├── 📄 config.yml
+├── 📂 examples/
+│   └── 📄 250118__ar_farm_04.png
+├── 📂 image_extractor/
+│   ├── 🐍 00_startskript.py
+│   └── 📂 0skripts/
+│       ├── 🐍 CleanUp.py
+│       ├── 🐍 Collation.py
+│       ├── 🐍 ConvertWebp.py
+│       ├── 🐍 Enhancement.py
+│       ├── 🐍 Extract.py
+│       ├── 🐍 ExtractGray.py
+│       ├── 🐍 Folders.py
+│       ├── 🐍 Scal.py
+│       ├── 🐍 TransBack.py
+│       ├── 🐍 _logger.py
+│       ├── 🐍 _utils.py
+│       └── 📄 settings.ini
+├── 📂 instance/
+│   └── 💾 login.db
+├── 📝 requirements.txt
+├── 📂 src/
+│   ├── 🐍 __init__.py
+│   ├── 🐍 app.py
+│   └── 📂 blueprints/
+│       └── 🐍 extractor.py
+├── 📂 static/
+│   ├── 📂 css/
+│   └── 📂 js/
+├── 📂 templates/
+│   ├── 🌐 base.html
+│   ├── 🌐 index.html
+│   ├── 🌐 login.html
+│   └── 🌐 register.html
+└── 📂 tests/
+    ├── 🐍 test_convert.py
+    ├── 🐍 test_extract.py
+    └── 🐍 test_routes.py
