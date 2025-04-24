@@ -1,25 +1,999 @@
 📂 ImagesExtract
 ├── 📝 .gitignore
+├── 🐍 00_startskript.py
+├── 📂 0skripts/
+│   ├── 🐍 CleanUp.py
+│   ├── 🐍 Collation.py
+│   ├── 🐍 ConvertWebp.py
+│   ├── 🐍 Enhancement.py
+│   ├── 🐍 Extract.py
+│   ├── 🐍 ExtractGray.py
+│   ├── 🐍 Folders.py
+│   ├── 🐍 Scal.py
+│   ├── 🐍 TransBack.py
+│   ├── 🐍 _logger.py
+│   ├── 🐍 _utils.py
+│   └── 📄 settings.ini
 ├── 📝 InContent.txt
 ├── 📝 README.md
 ├── 📄 config.yml
+├── 📝 error_log.txt
 ├── 📂 examples/
-│   └── 📄 250118__ar_farm_04.png
+│   ├── 📄 250118__ar_farm_04.png
+│   └── 📄 250328__ar_wall_02.png
 ├── 📂 image_extractor/
-│   ├── 🐍 00_startskript.py
-│   └── 📂 0skripts/
-│       ├── 🐍 CleanUp.py
-│       ├── 🐍 Collation.py
-│       ├── 🐍 ConvertWebp.py
-│       ├── 🐍 Enhancement.py
-│       ├── 🐍 Extract.py
-│       ├── 🐍 ExtractGray.py
-│       ├── 🐍 Folders.py
-│       ├── 🐍 Scal.py
-│       ├── 🐍 TransBack.py
-│       ├── 🐍 _logger.py
-│       ├── 🐍 _utils.py
-│       └── 📄 settings.ini
+│   ├── 📂 250424/
+│   │   ├── 📂 01-png/
+│   │   │   └── 📄 250118__ar_farm_04.png
+│   │   ├── 📂 02-png/
+│   │   │   └── 📄 250118__ar_farm_04.png
+│   │   ├── 📂 03-Enhancement/
+│   │   │   └── 📂 250118__ar_farm_04/
+│   │   │       └── 📄 250118__ar_farm_04.png
+│   │   ├── 📂 03-Enhanclean/
+│   │   │   └── 📂 250118__ar_farm_04/
+│   │   │       └── 📄 250118__ar_farm_04.png
+│   │   ├── 📂 03-Enhancwhite/
+│   │   │   └── 📂 250118__ar_farm_04/
+│   │   │       └── 📄 250118__ar_farm_04.png
+│   │   ├── 📂 03-TransBack/
+│   │   │   ├── 📂 +Collation/
+│   │   │   │   ├── 📄 filtered_13_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_14_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_17_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_19_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_20_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_21_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_22_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_23_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_24_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_25_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_27_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_28_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_29_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_30_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_31_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_34_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_35_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_36_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_37_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_38_250118__ar_farm_04.png
+│   │   │   │   ├── 📄 filtered_39_250118__ar_farm_04.png
+│   │   │   │   ├── 📂 x25/
+│   │   │   │   │   ├── 📄 filtered_13_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_14_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_17_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_19_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_20_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_21_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_22_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_23_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_24_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_25_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_27_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_28_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_29_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_30_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_31_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_34_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_35_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_36_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_37_250118__ar_farm_04_x25.png
+│   │   │   │   │   ├── 📄 filtered_38_250118__ar_farm_04_x25.png
+│   │   │   │   │   └── 📄 filtered_39_250118__ar_farm_04_x25.png
+│   │   │   │   ├── 📂 x50/
+│   │   │   │   │   ├── 📄 filtered_13_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_14_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_17_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_19_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_20_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_21_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_22_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_23_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_24_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_25_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_27_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_28_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_29_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_30_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_31_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_34_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_35_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_36_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_37_250118__ar_farm_04_x50.png
+│   │   │   │   │   ├── 📄 filtered_38_250118__ar_farm_04_x50.png
+│   │   │   │   │   └── 📄 filtered_39_250118__ar_farm_04_x50.png
+│   │   │   │   ├── 📂 x70/
+│   │   │   │   │   ├── 📄 filtered_13_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_14_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_17_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_19_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_20_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_21_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_22_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_23_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_24_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_25_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_27_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_28_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_29_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_30_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_31_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_34_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_35_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_36_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_37_250118__ar_farm_04_x70.png
+│   │   │   │   │   ├── 📄 filtered_38_250118__ar_farm_04_x70.png
+│   │   │   │   │   └── 📄 filtered_39_250118__ar_farm_04_x70.png
+│   │   │   │   └── 📂 x80/
+│   │   │   │       ├── 📄 filtered_13_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_14_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_17_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_19_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_20_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_21_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_22_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_23_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_24_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_25_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_27_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_28_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_29_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_30_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_31_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_34_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_35_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_36_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_37_250118__ar_farm_04_x80.png
+│   │   │   │       ├── 📄 filtered_38_250118__ar_farm_04_x80.png
+│   │   │   │       └── 📄 filtered_39_250118__ar_farm_04_x80.png
+│   │   │   └── 📂 250118__ar_farm_04/
+│   │   │       ├── 📄 250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_13_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_14_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_17_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_19_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_20_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_21_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_22_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_23_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_24_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_25_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_27_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_28_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_29_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_30_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_31_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_34_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_35_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_36_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_37_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_38_250118__ar_farm_04.png
+│   │   │       ├── 📄 filtered_39_250118__ar_farm_04.png
+│   │   │       ├── 📂 x25/
+│   │   │       │   ├── 📄 filtered_13_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_14_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_17_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_19_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_20_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_21_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_22_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_23_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_24_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_25_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_27_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_28_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_29_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_30_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_31_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_34_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_35_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_36_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_37_250118__ar_farm_04_x25.png
+│   │   │       │   ├── 📄 filtered_38_250118__ar_farm_04_x25.png
+│   │   │       │   └── 📄 filtered_39_250118__ar_farm_04_x25.png
+│   │   │       ├── 📂 x50/
+│   │   │       │   ├── 📄 filtered_13_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_14_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_17_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_19_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_20_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_21_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_22_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_23_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_24_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_25_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_27_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_28_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_29_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_30_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_31_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_34_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_35_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_36_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_37_250118__ar_farm_04_x50.png
+│   │   │       │   ├── 📄 filtered_38_250118__ar_farm_04_x50.png
+│   │   │       │   └── 📄 filtered_39_250118__ar_farm_04_x50.png
+│   │   │       ├── 📂 x70/
+│   │   │       │   ├── 📄 filtered_13_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_14_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_17_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_19_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_20_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_21_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_22_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_23_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_24_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_25_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_27_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_28_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_29_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_30_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_31_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_34_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_35_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_36_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_37_250118__ar_farm_04_x70.png
+│   │   │       │   ├── 📄 filtered_38_250118__ar_farm_04_x70.png
+│   │   │       │   └── 📄 filtered_39_250118__ar_farm_04_x70.png
+│   │   │       └── 📂 x80/
+│   │   │           ├── 📄 filtered_13_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_14_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_17_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_19_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_20_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_21_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_22_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_23_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_24_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_25_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_27_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_28_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_29_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_30_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_31_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_34_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_35_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_36_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_37_250118__ar_farm_04_x80.png
+│   │   │           ├── 📄 filtered_38_250118__ar_farm_04_x80.png
+│   │   │           └── 📄 filtered_39_250118__ar_farm_04_x80.png
+│   │   ├── 📂 03-TransBack-2/
+│   │   │   └── 📂 250118__ar_farm_04/
+│   │   │       └── 📄 250118__ar_farm_04.png
+│   │   └── 📂 03-Whitepaper/
+│   │       ├── 📂 +Collation/
+│   │       │   ├── 📄 13_250118__ar_farm_04.png
+│   │       │   ├── 📄 14_250118__ar_farm_04.png
+│   │       │   ├── 📄 17_250118__ar_farm_04.png
+│   │       │   ├── 📄 19_250118__ar_farm_04.png
+│   │       │   ├── 📄 20_250118__ar_farm_04.png
+│   │       │   ├── 📄 21_250118__ar_farm_04.png
+│   │       │   ├── 📄 22_250118__ar_farm_04.png
+│   │       │   ├── 📄 23_250118__ar_farm_04.png
+│   │       │   ├── 📄 24_250118__ar_farm_04.png
+│   │       │   ├── 📄 25_250118__ar_farm_04.png
+│   │       │   ├── 📄 27_250118__ar_farm_04.png
+│   │       │   ├── 📄 28_250118__ar_farm_04.png
+│   │       │   ├── 📄 29_250118__ar_farm_04.png
+│   │       │   ├── 📄 30_250118__ar_farm_04.png
+│   │       │   ├── 📄 31_250118__ar_farm_04.png
+│   │       │   ├── 📄 34_250118__ar_farm_04.png
+│   │       │   ├── 📄 35_250118__ar_farm_04.png
+│   │       │   ├── 📄 36_250118__ar_farm_04.png
+│   │       │   ├── 📄 37_250118__ar_farm_04.png
+│   │       │   ├── 📄 38_250118__ar_farm_04.png
+│   │       │   ├── 📄 39_250118__ar_farm_04.png
+│   │       │   ├── 📂 x25/
+│   │       │   │   ├── 📄 13_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 14_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 17_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 19_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 20_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 21_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 22_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 23_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 24_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 25_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 27_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 28_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 29_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 30_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 31_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 34_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 35_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 36_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 37_250118__ar_farm_04_x25.png
+│   │       │   │   ├── 📄 38_250118__ar_farm_04_x25.png
+│   │       │   │   └── 📄 39_250118__ar_farm_04_x25.png
+│   │       │   ├── 📂 x50/
+│   │       │   │   ├── 📄 13_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 14_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 17_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 19_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 20_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 21_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 22_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 23_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 24_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 25_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 27_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 28_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 29_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 30_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 31_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 34_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 35_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 36_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 37_250118__ar_farm_04_x50.png
+│   │       │   │   ├── 📄 38_250118__ar_farm_04_x50.png
+│   │       │   │   └── 📄 39_250118__ar_farm_04_x50.png
+│   │       │   ├── 📂 x70/
+│   │       │   │   ├── 📄 13_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 14_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 17_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 19_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 20_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 21_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 22_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 23_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 24_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 25_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 27_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 28_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 29_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 30_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 31_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 34_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 35_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 36_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 37_250118__ar_farm_04_x70.png
+│   │       │   │   ├── 📄 38_250118__ar_farm_04_x70.png
+│   │       │   │   └── 📄 39_250118__ar_farm_04_x70.png
+│   │       │   └── 📂 x80/
+│   │       │       ├── 📄 13_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 14_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 17_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 19_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 20_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 21_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 22_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 23_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 24_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 25_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 27_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 28_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 29_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 30_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 31_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 34_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 35_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 36_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 37_250118__ar_farm_04_x80.png
+│   │       │       ├── 📄 38_250118__ar_farm_04_x80.png
+│   │       │       └── 📄 39_250118__ar_farm_04_x80.png
+│   │       └── 📂 250118__ar_farm_04/
+│   │           ├── 📄 13_250118__ar_farm_04.png
+│   │           ├── 📄 14_250118__ar_farm_04.png
+│   │           ├── 📄 17_250118__ar_farm_04.png
+│   │           ├── 📄 19_250118__ar_farm_04.png
+│   │           ├── 📄 20_250118__ar_farm_04.png
+│   │           ├── 📄 21_250118__ar_farm_04.png
+│   │           ├── 📄 22_250118__ar_farm_04.png
+│   │           ├── 📄 23_250118__ar_farm_04.png
+│   │           ├── 📄 24_250118__ar_farm_04.png
+│   │           ├── 📄 250118__ar_farm_04.png
+│   │           ├── 📄 25_250118__ar_farm_04.png
+│   │           ├── 📄 27_250118__ar_farm_04.png
+│   │           ├── 📄 28_250118__ar_farm_04.png
+│   │           ├── 📄 29_250118__ar_farm_04.png
+│   │           ├── 📄 30_250118__ar_farm_04.png
+│   │           ├── 📄 31_250118__ar_farm_04.png
+│   │           ├── 📄 34_250118__ar_farm_04.png
+│   │           ├── 📄 35_250118__ar_farm_04.png
+│   │           ├── 📄 36_250118__ar_farm_04.png
+│   │           ├── 📄 37_250118__ar_farm_04.png
+│   │           ├── 📄 38_250118__ar_farm_04.png
+│   │           ├── 📄 39_250118__ar_farm_04.png
+│   │           ├── 📂 x25/
+│   │           │   ├── 📄 13_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 14_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 17_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 19_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 20_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 21_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 22_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 23_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 24_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 25_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 27_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 28_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 29_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 30_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 31_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 34_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 35_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 36_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 37_250118__ar_farm_04_x25.png
+│   │           │   ├── 📄 38_250118__ar_farm_04_x25.png
+│   │           │   └── 📄 39_250118__ar_farm_04_x25.png
+│   │           ├── 📂 x50/
+│   │           │   ├── 📄 13_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 14_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 17_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 19_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 20_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 21_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 22_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 23_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 24_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 25_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 27_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 28_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 29_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 30_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 31_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 34_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 35_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 36_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 37_250118__ar_farm_04_x50.png
+│   │           │   ├── 📄 38_250118__ar_farm_04_x50.png
+│   │           │   └── 📄 39_250118__ar_farm_04_x50.png
+│   │           ├── 📂 x70/
+│   │           │   ├── 📄 13_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 14_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 17_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 19_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 20_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 21_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 22_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 23_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 24_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 25_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 27_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 28_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 29_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 30_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 31_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 34_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 35_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 36_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 37_250118__ar_farm_04_x70.png
+│   │           │   ├── 📄 38_250118__ar_farm_04_x70.png
+│   │           │   └── 📄 39_250118__ar_farm_04_x70.png
+│   │           └── 📂 x80/
+│   │               ├── 📄 13_250118__ar_farm_04_x80.png
+│   │               ├── 📄 14_250118__ar_farm_04_x80.png
+│   │               ├── 📄 17_250118__ar_farm_04_x80.png
+│   │               ├── 📄 19_250118__ar_farm_04_x80.png
+│   │               ├── 📄 20_250118__ar_farm_04_x80.png
+│   │               ├── 📄 21_250118__ar_farm_04_x80.png
+│   │               ├── 📄 22_250118__ar_farm_04_x80.png
+│   │               ├── 📄 23_250118__ar_farm_04_x80.png
+│   │               ├── 📄 24_250118__ar_farm_04_x80.png
+│   │               ├── 📄 25_250118__ar_farm_04_x80.png
+│   │               ├── 📄 27_250118__ar_farm_04_x80.png
+│   │               ├── 📄 28_250118__ar_farm_04_x80.png
+│   │               ├── 📄 29_250118__ar_farm_04_x80.png
+│   │               ├── 📄 30_250118__ar_farm_04_x80.png
+│   │               ├── 📄 31_250118__ar_farm_04_x80.png
+│   │               ├── 📄 34_250118__ar_farm_04_x80.png
+│   │               ├── 📄 35_250118__ar_farm_04_x80.png
+│   │               ├── 📄 36_250118__ar_farm_04_x80.png
+│   │               ├── 📄 37_250118__ar_farm_04_x80.png
+│   │               ├── 📄 38_250118__ar_farm_04_x80.png
+│   │               └── 📄 39_250118__ar_farm_04_x80.png
+│   └── 📂 250424_01/
+│       ├── 📂 01-png/
+│       │   └── 📄 250118__ar_farm_04.png
+│       ├── 📂 02-png/
+│       │   └── 📄 250118__ar_farm_04.png
+│       ├── 📂 03-Enhancement/
+│       │   ├── 📂 +Collation/
+│       │   │   ├── 📄 250118__ar_farm_04.png
+│       │   │   ├── 📂 x25/
+│       │   │   │   └── 📄 250118__ar_farm_04_x25.png
+│       │   │   ├── 📂 x50/
+│       │   │   │   └── 📄 250118__ar_farm_04_x50.png
+│       │   │   ├── 📂 x70/
+│       │   │   │   └── 📄 250118__ar_farm_04_x70.png
+│       │   │   └── 📂 x80/
+│       │   │       └── 📄 250118__ar_farm_04_x80.png
+│       │   └── 📂 250118__ar_farm_04/
+│       │       ├── 📄 250118__ar_farm_04.png
+│       │       ├── 📂 x25/
+│       │       │   └── 📄 250118__ar_farm_04_x25.png
+│       │       ├── 📂 x50/
+│       │       │   └── 📄 250118__ar_farm_04_x50.png
+│       │       ├── 📂 x70/
+│       │       │   └── 📄 250118__ar_farm_04_x70.png
+│       │       └── 📂 x80/
+│       │           └── 📄 250118__ar_farm_04_x80.png
+│       ├── 📂 03-Enhanclean/
+│       │   ├── 📂 +Collation/
+│       │   │   ├── 📄 250118__ar_farm_04.png
+│       │   │   ├── 📂 x25/
+│       │   │   │   └── 📄 250118__ar_farm_04_x25.png
+│       │   │   ├── 📂 x50/
+│       │   │   │   └── 📄 250118__ar_farm_04_x50.png
+│       │   │   ├── 📂 x70/
+│       │   │   │   └── 📄 250118__ar_farm_04_x70.png
+│       │   │   └── 📂 x80/
+│       │   │       └── 📄 250118__ar_farm_04_x80.png
+│       │   └── 📂 250118__ar_farm_04/
+│       │       ├── 📄 250118__ar_farm_04.png
+│       │       ├── 📂 x25/
+│       │       │   └── 📄 250118__ar_farm_04_x25.png
+│       │       ├── 📂 x50/
+│       │       │   └── 📄 250118__ar_farm_04_x50.png
+│       │       ├── 📂 x70/
+│       │       │   └── 📄 250118__ar_farm_04_x70.png
+│       │       └── 📂 x80/
+│       │           └── 📄 250118__ar_farm_04_x80.png
+│       ├── 📂 03-Enhancwhite/
+│       │   ├── 📂 +Collation/
+│       │   │   ├── 📄 14_250118__ar_farm_04.png
+│       │   │   ├── 📄 20_250118__ar_farm_04.png
+│       │   │   ├── 📄 21_250118__ar_farm_04.png
+│       │   │   ├── 📄 22_250118__ar_farm_04.png
+│       │   │   ├── 📄 23_250118__ar_farm_04.png
+│       │   │   ├── 📄 24_250118__ar_farm_04.png
+│       │   │   ├── 📄 25_250118__ar_farm_04.png
+│       │   │   ├── 📄 26_250118__ar_farm_04.png
+│       │   │   ├── 📄 28_250118__ar_farm_04.png
+│       │   │   ├── 📄 29_250118__ar_farm_04.png
+│       │   │   ├── 📄 30_250118__ar_farm_04.png
+│       │   │   ├── 📄 31_250118__ar_farm_04.png
+│       │   │   ├── 📄 32_250118__ar_farm_04.png
+│       │   │   ├── 📄 35_250118__ar_farm_04.png
+│       │   │   ├── 📄 36_250118__ar_farm_04.png
+│       │   │   ├── 📄 37_250118__ar_farm_04.png
+│       │   │   ├── 📄 38_250118__ar_farm_04.png
+│       │   │   ├── 📄 39_250118__ar_farm_04.png
+│       │   │   ├── 📄 40_250118__ar_farm_04.png
+│       │   │   ├── 📂 x25/
+│       │   │   │   ├── 📄 14_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 20_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 21_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 22_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 23_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 24_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 25_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 26_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 28_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 29_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 30_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 31_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 32_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 35_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 36_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 37_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 38_250118__ar_farm_04_x25.png
+│       │   │   │   ├── 📄 39_250118__ar_farm_04_x25.png
+│       │   │   │   └── 📄 40_250118__ar_farm_04_x25.png
+│       │   │   ├── 📂 x50/
+│       │   │   │   ├── 📄 14_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 20_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 21_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 22_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 23_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 24_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 25_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 26_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 28_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 29_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 30_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 31_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 32_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 35_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 36_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 37_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 38_250118__ar_farm_04_x50.png
+│       │   │   │   ├── 📄 39_250118__ar_farm_04_x50.png
+│       │   │   │   └── 📄 40_250118__ar_farm_04_x50.png
+│       │   │   ├── 📂 x70/
+│       │   │   │   ├── 📄 14_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 20_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 21_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 22_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 23_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 24_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 25_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 26_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 28_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 29_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 30_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 31_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 32_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 35_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 36_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 37_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 38_250118__ar_farm_04_x70.png
+│       │   │   │   ├── 📄 39_250118__ar_farm_04_x70.png
+│       │   │   │   └── 📄 40_250118__ar_farm_04_x70.png
+│       │   │   └── 📂 x80/
+│       │   │       ├── 📄 14_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 20_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 21_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 22_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 23_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 24_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 25_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 26_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 28_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 29_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 30_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 31_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 32_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 35_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 36_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 37_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 38_250118__ar_farm_04_x80.png
+│       │   │       ├── 📄 39_250118__ar_farm_04_x80.png
+│       │   │       └── 📄 40_250118__ar_farm_04_x80.png
+│       │   └── 📂 250118__ar_farm_04/
+│       │       ├── 📄 14_250118__ar_farm_04.png
+│       │       ├── 📄 20_250118__ar_farm_04.png
+│       │       ├── 📄 21_250118__ar_farm_04.png
+│       │       ├── 📄 22_250118__ar_farm_04.png
+│       │       ├── 📄 23_250118__ar_farm_04.png
+│       │       ├── 📄 24_250118__ar_farm_04.png
+│       │       ├── 📄 25_250118__ar_farm_04.png
+│       │       ├── 📄 26_250118__ar_farm_04.png
+│       │       ├── 📄 28_250118__ar_farm_04.png
+│       │       ├── 📄 29_250118__ar_farm_04.png
+│       │       ├── 📄 30_250118__ar_farm_04.png
+│       │       ├── 📄 31_250118__ar_farm_04.png
+│       │       ├── 📄 32_250118__ar_farm_04.png
+│       │       ├── 📄 35_250118__ar_farm_04.png
+│       │       ├── 📄 36_250118__ar_farm_04.png
+│       │       ├── 📄 37_250118__ar_farm_04.png
+│       │       ├── 📄 38_250118__ar_farm_04.png
+│       │       ├── 📄 39_250118__ar_farm_04.png
+│       │       ├── 📄 40_250118__ar_farm_04.png
+│       │       ├── 📂 x25/
+│       │       │   ├── 📄 14_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 20_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 21_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 22_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 23_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 24_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 25_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 26_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 28_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 29_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 30_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 31_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 32_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 35_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 36_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 37_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 38_250118__ar_farm_04_x25.png
+│       │       │   ├── 📄 39_250118__ar_farm_04_x25.png
+│       │       │   └── 📄 40_250118__ar_farm_04_x25.png
+│       │       ├── 📂 x50/
+│       │       │   ├── 📄 14_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 20_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 21_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 22_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 23_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 24_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 25_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 26_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 28_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 29_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 30_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 31_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 32_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 35_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 36_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 37_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 38_250118__ar_farm_04_x50.png
+│       │       │   ├── 📄 39_250118__ar_farm_04_x50.png
+│       │       │   └── 📄 40_250118__ar_farm_04_x50.png
+│       │       ├── 📂 x70/
+│       │       │   ├── 📄 14_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 20_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 21_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 22_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 23_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 24_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 25_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 26_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 28_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 29_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 30_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 31_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 32_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 35_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 36_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 37_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 38_250118__ar_farm_04_x70.png
+│       │       │   ├── 📄 39_250118__ar_farm_04_x70.png
+│       │       │   └── 📄 40_250118__ar_farm_04_x70.png
+│       │       └── 📂 x80/
+│       │           ├── 📄 14_250118__ar_farm_04_x80.png
+│       │           ├── 📄 20_250118__ar_farm_04_x80.png
+│       │           ├── 📄 21_250118__ar_farm_04_x80.png
+│       │           ├── 📄 22_250118__ar_farm_04_x80.png
+│       │           ├── 📄 23_250118__ar_farm_04_x80.png
+│       │           ├── 📄 24_250118__ar_farm_04_x80.png
+│       │           ├── 📄 25_250118__ar_farm_04_x80.png
+│       │           ├── 📄 26_250118__ar_farm_04_x80.png
+│       │           ├── 📄 28_250118__ar_farm_04_x80.png
+│       │           ├── 📄 29_250118__ar_farm_04_x80.png
+│       │           ├── 📄 30_250118__ar_farm_04_x80.png
+│       │           ├── 📄 31_250118__ar_farm_04_x80.png
+│       │           ├── 📄 32_250118__ar_farm_04_x80.png
+│       │           ├── 📄 35_250118__ar_farm_04_x80.png
+│       │           ├── 📄 36_250118__ar_farm_04_x80.png
+│       │           ├── 📄 37_250118__ar_farm_04_x80.png
+│       │           ├── 📄 38_250118__ar_farm_04_x80.png
+│       │           ├── 📄 39_250118__ar_farm_04_x80.png
+│       │           └── 📄 40_250118__ar_farm_04_x80.png
+│       ├── 📂 03-TransBack/
+│       │   ├── 📂 +Collation/
+│       │   │   ├── 📄 250118__ar_farm_04.png
+│       │   │   ├── 📂 x25/
+│       │   │   │   └── 📄 250118__ar_farm_04_x25.png
+│       │   │   ├── 📂 x50/
+│       │   │   │   └── 📄 250118__ar_farm_04_x50.png
+│       │   │   ├── 📂 x70/
+│       │   │   │   └── 📄 250118__ar_farm_04_x70.png
+│       │   │   └── 📂 x80/
+│       │   │       └── 📄 250118__ar_farm_04_x80.png
+│       │   └── 📂 250118__ar_farm_04/
+│       │       ├── 📄 250118__ar_farm_04.png
+│       │       ├── 📂 x25/
+│       │       │   └── 📄 250118__ar_farm_04_x25.png
+│       │       ├── 📂 x50/
+│       │       │   └── 📄 250118__ar_farm_04_x50.png
+│       │       ├── 📂 x70/
+│       │       │   └── 📄 250118__ar_farm_04_x70.png
+│       │       └── 📂 x80/
+│       │           └── 📄 250118__ar_farm_04_x80.png
+│       ├── 📂 03-TransBack-2/
+│       │   ├── 📂 +Collation/
+│       │   │   ├── 📄 250118__ar_farm_04.png
+│       │   │   ├── 📂 x25/
+│       │   │   │   └── 📄 250118__ar_farm_04_x25.png
+│       │   │   ├── 📂 x50/
+│       │   │   │   └── 📄 250118__ar_farm_04_x50.png
+│       │   │   ├── 📂 x70/
+│       │   │   │   └── 📄 250118__ar_farm_04_x70.png
+│       │   │   └── 📂 x80/
+│       │   │       └── 📄 250118__ar_farm_04_x80.png
+│       │   └── 📂 250118__ar_farm_04/
+│       │       ├── 📄 250118__ar_farm_04.png
+│       │       ├── 📂 x25/
+│       │       │   └── 📄 250118__ar_farm_04_x25.png
+│       │       ├── 📂 x50/
+│       │       │   └── 📄 250118__ar_farm_04_x50.png
+│       │       ├── 📂 x70/
+│       │       │   └── 📄 250118__ar_farm_04_x70.png
+│       │       └── 📂 x80/
+│       │           └── 📄 250118__ar_farm_04_x80.png
+│       └── 📂 03-Whitepaper/
+│           ├── 📂 +Collation/
+│           │   ├── 📄 13_250118__ar_farm_04.png
+│           │   ├── 📄 14_250118__ar_farm_04.png
+│           │   ├── 📄 17_250118__ar_farm_04.png
+│           │   ├── 📄 19_250118__ar_farm_04.png
+│           │   ├── 📄 20_250118__ar_farm_04.png
+│           │   ├── 📄 21_250118__ar_farm_04.png
+│           │   ├── 📄 22_250118__ar_farm_04.png
+│           │   ├── 📄 23_250118__ar_farm_04.png
+│           │   ├── 📄 24_250118__ar_farm_04.png
+│           │   ├── 📄 25_250118__ar_farm_04.png
+│           │   ├── 📄 27_250118__ar_farm_04.png
+│           │   ├── 📄 28_250118__ar_farm_04.png
+│           │   ├── 📄 29_250118__ar_farm_04.png
+│           │   ├── 📄 30_250118__ar_farm_04.png
+│           │   ├── 📄 31_250118__ar_farm_04.png
+│           │   ├── 📄 34_250118__ar_farm_04.png
+│           │   ├── 📄 35_250118__ar_farm_04.png
+│           │   ├── 📄 36_250118__ar_farm_04.png
+│           │   ├── 📄 37_250118__ar_farm_04.png
+│           │   ├── 📄 38_250118__ar_farm_04.png
+│           │   ├── 📄 39_250118__ar_farm_04.png
+│           │   ├── 📂 x25/
+│           │   │   ├── 📄 13_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 14_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 17_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 19_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 20_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 21_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 22_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 23_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 24_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 25_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 27_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 28_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 29_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 30_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 31_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 34_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 35_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 36_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 37_250118__ar_farm_04_x25.png
+│           │   │   ├── 📄 38_250118__ar_farm_04_x25.png
+│           │   │   └── 📄 39_250118__ar_farm_04_x25.png
+│           │   ├── 📂 x50/
+│           │   │   ├── 📄 13_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 14_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 17_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 19_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 20_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 21_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 22_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 23_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 24_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 25_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 27_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 28_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 29_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 30_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 31_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 34_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 35_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 36_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 37_250118__ar_farm_04_x50.png
+│           │   │   ├── 📄 38_250118__ar_farm_04_x50.png
+│           │   │   └── 📄 39_250118__ar_farm_04_x50.png
+│           │   ├── 📂 x70/
+│           │   │   ├── 📄 13_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 14_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 17_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 19_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 20_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 21_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 22_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 23_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 24_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 25_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 27_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 28_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 29_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 30_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 31_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 34_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 35_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 36_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 37_250118__ar_farm_04_x70.png
+│           │   │   ├── 📄 38_250118__ar_farm_04_x70.png
+│           │   │   └── 📄 39_250118__ar_farm_04_x70.png
+│           │   └── 📂 x80/
+│           │       ├── 📄 13_250118__ar_farm_04_x80.png
+│           │       ├── 📄 14_250118__ar_farm_04_x80.png
+│           │       ├── 📄 17_250118__ar_farm_04_x80.png
+│           │       ├── 📄 19_250118__ar_farm_04_x80.png
+│           │       ├── 📄 20_250118__ar_farm_04_x80.png
+│           │       ├── 📄 21_250118__ar_farm_04_x80.png
+│           │       ├── 📄 22_250118__ar_farm_04_x80.png
+│           │       ├── 📄 23_250118__ar_farm_04_x80.png
+│           │       ├── 📄 24_250118__ar_farm_04_x80.png
+│           │       ├── 📄 25_250118__ar_farm_04_x80.png
+│           │       ├── 📄 27_250118__ar_farm_04_x80.png
+│           │       ├── 📄 28_250118__ar_farm_04_x80.png
+│           │       ├── 📄 29_250118__ar_farm_04_x80.png
+│           │       ├── 📄 30_250118__ar_farm_04_x80.png
+│           │       ├── 📄 31_250118__ar_farm_04_x80.png
+│           │       ├── 📄 34_250118__ar_farm_04_x80.png
+│           │       ├── 📄 35_250118__ar_farm_04_x80.png
+│           │       ├── 📄 36_250118__ar_farm_04_x80.png
+│           │       ├── 📄 37_250118__ar_farm_04_x80.png
+│           │       ├── 📄 38_250118__ar_farm_04_x80.png
+│           │       └── 📄 39_250118__ar_farm_04_x80.png
+│           └── 📂 250118__ar_farm_04/
+│               ├── 📄 13_250118__ar_farm_04.png
+│               ├── 📄 14_250118__ar_farm_04.png
+│               ├── 📄 17_250118__ar_farm_04.png
+│               ├── 📄 19_250118__ar_farm_04.png
+│               ├── 📄 20_250118__ar_farm_04.png
+│               ├── 📄 21_250118__ar_farm_04.png
+│               ├── 📄 22_250118__ar_farm_04.png
+│               ├── 📄 23_250118__ar_farm_04.png
+│               ├── 📄 24_250118__ar_farm_04.png
+│               ├── 📄 25_250118__ar_farm_04.png
+│               ├── 📄 27_250118__ar_farm_04.png
+│               ├── 📄 28_250118__ar_farm_04.png
+│               ├── 📄 29_250118__ar_farm_04.png
+│               ├── 📄 30_250118__ar_farm_04.png
+│               ├── 📄 31_250118__ar_farm_04.png
+│               ├── 📄 34_250118__ar_farm_04.png
+│               ├── 📄 35_250118__ar_farm_04.png
+│               ├── 📄 36_250118__ar_farm_04.png
+│               ├── 📄 37_250118__ar_farm_04.png
+│               ├── 📄 38_250118__ar_farm_04.png
+│               ├── 📄 39_250118__ar_farm_04.png
+│               ├── 📂 x25/
+│               │   ├── 📄 13_250118__ar_farm_04_x25.png
+│               │   ├── 📄 14_250118__ar_farm_04_x25.png
+│               │   ├── 📄 17_250118__ar_farm_04_x25.png
+│               │   ├── 📄 19_250118__ar_farm_04_x25.png
+│               │   ├── 📄 20_250118__ar_farm_04_x25.png
+│               │   ├── 📄 21_250118__ar_farm_04_x25.png
+│               │   ├── 📄 22_250118__ar_farm_04_x25.png
+│               │   ├── 📄 23_250118__ar_farm_04_x25.png
+│               │   ├── 📄 24_250118__ar_farm_04_x25.png
+│               │   ├── 📄 25_250118__ar_farm_04_x25.png
+│               │   ├── 📄 27_250118__ar_farm_04_x25.png
+│               │   ├── 📄 28_250118__ar_farm_04_x25.png
+│               │   ├── 📄 29_250118__ar_farm_04_x25.png
+│               │   ├── 📄 30_250118__ar_farm_04_x25.png
+│               │   ├── 📄 31_250118__ar_farm_04_x25.png
+│               │   ├── 📄 34_250118__ar_farm_04_x25.png
+│               │   ├── 📄 35_250118__ar_farm_04_x25.png
+│               │   ├── 📄 36_250118__ar_farm_04_x25.png
+│               │   ├── 📄 37_250118__ar_farm_04_x25.png
+│               │   ├── 📄 38_250118__ar_farm_04_x25.png
+│               │   └── 📄 39_250118__ar_farm_04_x25.png
+│               ├── 📂 x50/
+│               │   ├── 📄 13_250118__ar_farm_04_x50.png
+│               │   ├── 📄 14_250118__ar_farm_04_x50.png
+│               │   ├── 📄 17_250118__ar_farm_04_x50.png
+│               │   ├── 📄 19_250118__ar_farm_04_x50.png
+│               │   ├── 📄 20_250118__ar_farm_04_x50.png
+│               │   ├── 📄 21_250118__ar_farm_04_x50.png
+│               │   ├── 📄 22_250118__ar_farm_04_x50.png
+│               │   ├── 📄 23_250118__ar_farm_04_x50.png
+│               │   ├── 📄 24_250118__ar_farm_04_x50.png
+│               │   ├── 📄 25_250118__ar_farm_04_x50.png
+│               │   ├── 📄 27_250118__ar_farm_04_x50.png
+│               │   ├── 📄 28_250118__ar_farm_04_x50.png
+│               │   ├── 📄 29_250118__ar_farm_04_x50.png
+│               │   ├── 📄 30_250118__ar_farm_04_x50.png
+│               │   ├── 📄 31_250118__ar_farm_04_x50.png
+│               │   ├── 📄 34_250118__ar_farm_04_x50.png
+│               │   ├── 📄 35_250118__ar_farm_04_x50.png
+│               │   ├── 📄 36_250118__ar_farm_04_x50.png
+│               │   ├── 📄 37_250118__ar_farm_04_x50.png
+│               │   ├── 📄 38_250118__ar_farm_04_x50.png
+│               │   └── 📄 39_250118__ar_farm_04_x50.png
+│               ├── 📂 x70/
+│               │   ├── 📄 13_250118__ar_farm_04_x70.png
+│               │   ├── 📄 14_250118__ar_farm_04_x70.png
+│               │   ├── 📄 17_250118__ar_farm_04_x70.png
+│               │   ├── 📄 19_250118__ar_farm_04_x70.png
+│               │   ├── 📄 20_250118__ar_farm_04_x70.png
+│               │   ├── 📄 21_250118__ar_farm_04_x70.png
+│               │   ├── 📄 22_250118__ar_farm_04_x70.png
+│               │   ├── 📄 23_250118__ar_farm_04_x70.png
+│               │   ├── 📄 24_250118__ar_farm_04_x70.png
+│               │   ├── 📄 25_250118__ar_farm_04_x70.png
+│               │   ├── 📄 27_250118__ar_farm_04_x70.png
+│               │   ├── 📄 28_250118__ar_farm_04_x70.png
+│               │   ├── 📄 29_250118__ar_farm_04_x70.png
+│               │   ├── 📄 30_250118__ar_farm_04_x70.png
+│               │   ├── 📄 31_250118__ar_farm_04_x70.png
+│               │   ├── 📄 34_250118__ar_farm_04_x70.png
+│               │   ├── 📄 35_250118__ar_farm_04_x70.png
+│               │   ├── 📄 36_250118__ar_farm_04_x70.png
+│               │   ├── 📄 37_250118__ar_farm_04_x70.png
+│               │   ├── 📄 38_250118__ar_farm_04_x70.png
+│               │   └── 📄 39_250118__ar_farm_04_x70.png
+│               └── 📂 x80/
+│                   ├── 📄 13_250118__ar_farm_04_x80.png
+│                   ├── 📄 14_250118__ar_farm_04_x80.png
+│                   ├── 📄 17_250118__ar_farm_04_x80.png
+│                   ├── 📄 19_250118__ar_farm_04_x80.png
+│                   ├── 📄 20_250118__ar_farm_04_x80.png
+│                   ├── 📄 21_250118__ar_farm_04_x80.png
+│                   ├── 📄 22_250118__ar_farm_04_x80.png
+│                   ├── 📄 23_250118__ar_farm_04_x80.png
+│                   ├── 📄 24_250118__ar_farm_04_x80.png
+│                   ├── 📄 25_250118__ar_farm_04_x80.png
+│                   ├── 📄 27_250118__ar_farm_04_x80.png
+│                   ├── 📄 28_250118__ar_farm_04_x80.png
+│                   ├── 📄 29_250118__ar_farm_04_x80.png
+│                   ├── 📄 30_250118__ar_farm_04_x80.png
+│                   ├── 📄 31_250118__ar_farm_04_x80.png
+│                   ├── 📄 34_250118__ar_farm_04_x80.png
+│                   ├── 📄 35_250118__ar_farm_04_x80.png
+│                   ├── 📄 36_250118__ar_farm_04_x80.png
+│                   ├── 📄 37_250118__ar_farm_04_x80.png
+│                   ├── 📄 38_250118__ar_farm_04_x80.png
+│                   └── 📄 39_250118__ar_farm_04_x80.png
 ├── 📂 instance/
 │   └── 💾 login.db
 ├── 📝 requirements.txt
