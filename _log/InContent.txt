@@ -14,11 +14,11 @@
 │   ├── 🐍 TransBack.py
 │   ├── 🐍 _logger.py
 │   ├── 🐍 _utils.py
+│   ├── 🐍 invert.py
 │   └── 📄 settings.ini
 ├── 📝 InContent.txt
 ├── 📝 README.md
 ├── 📄 config.yml
-├── 📝 error_log.txt
 ├── 📂 image_ext/
 ├── 📂 instance/
 │   └── 💾 login.db
@@ -111,6 +111,7 @@ part_script7 = os.path.join(script_directory, "SwapColors.py")
 part_script8 = os.path.join(script_directory, "CleanUp.py")
 part_script9 = os.path.join(script_directory, "Scal.py")
 part_script10 = os.path.join(script_directory, "Collation.py")
+part_script11 = os.path.join(script_directory, "invert.py")
 # part_script6 = os.path.join(script_directory, "Modu6.py")
 
 # **8. INITIALIZE LOGGER**
@@ -130,7 +131,8 @@ scripts_to_run = [
     ("SwapColors.py", part_script7),
     ("CleanUp.py", part_script8),
     ("Scal.py", part_script9),
-    ("Collation.py", part_script10)
+    ("Collation.py", part_script10),
+    ("invert.py", part_script11)
     # ("Modul6.py", part_script6)
 ]
 
@@ -168,26 +170,6 @@ if enter_confirmation_str in ["true", "1", "yes", "on"]:
 📝 --- InContent.txt ---
 
 📝 --- README.md ---
-
-📝 --- error_log.txt ---
-2025-04-25 12:38:39,236 - [WARN] 03-swapcolors nicht gefunden – Modul beendet.
-2025-04-25 12:38:39,336 - [WARN] Output-Folder X:\Blobbite\P25Images...425_02\03-Enhancement nicht gefunden.
-2025-04-25 12:38:39,336 - [WARN] Output-Folder X:\Blobbite\P25Images...0425_02\03-Whitepaper nicht gefunden.
-2025-04-25 12:38:39,336 - [WARN] Output-Folder X:\Blobbite\P25Images...425_02\03-Enhancwhite nicht gefunden.
-2025-04-25 12:38:39,336 - [WARN] Output-Folder X:\Blobbite\P25Images...0425_02\03-Enhanclean nicht gefunden.
-2025-04-25 12:38:39,336 - [WARN] Output-Folder X:\Blobbite\P25Images...25_02\03-Enhwhitclean nicht gefunden.
-2025-04-25 12:39:59,459 - [WARN] 03-swapcolors nicht gefunden – Modul beendet.
-2025-04-25 12:39:59,590 - [WARN] Output-Folder X:\Blobbite\P25Images...425_03\03-Enhancement nicht gefunden.
-2025-04-25 12:39:59,590 - [WARN] Output-Folder X:\Blobbite\P25Images...0425_03\03-Whitepaper nicht gefunden.
-2025-04-25 12:39:59,590 - [WARN] Output-Folder X:\Blobbite\P25Images...425_03\03-Enhancwhite nicht gefunden.
-2025-04-25 12:39:59,590 - [WARN] Output-Folder X:\Blobbite\P25Images...0425_03\03-Enhanclean nicht gefunden.
-2025-04-25 12:39:59,590 - [WARN] Output-Folder X:\Blobbite\P25Images...25_03\03-Enhwhitclean nicht gefunden.
-2025-04-25 12:45:50,602 - [WARN] 03-swapcolors nicht gefunden – Modul beendet.
-2025-04-25 12:45:50,718 - [WARN] Output-Folder X:\Blobbite\P25Images...250425\03-Enhancement nicht gefunden.
-2025-04-25 12:45:50,718 - [WARN] Output-Folder X:\Blobbite\P25Images...\250425\03-Whitepaper nicht gefunden.
-2025-04-25 12:45:50,718 - [WARN] Output-Folder X:\Blobbite\P25Images...250425\03-Enhancwhite nicht gefunden.
-2025-04-25 12:45:50,718 - [WARN] Output-Folder X:\Blobbite\P25Images...\250425\03-Enhanclean nicht gefunden.
-2025-04-25 12:45:50,718 - [WARN] Output-Folder X:\Blobbite\P25Images...50425\03-Enhwhitclean nicht gefunden.
 
 📝 --- requirements.txt ---
 
@@ -355,7 +337,9 @@ if __name__ == "__main__":
         "Collation4": config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite"),
         "Collation5": config.get("Settings", "output_foldes_collation5", fallback="Enhanclean"),
         "Collation6": config.get("Settings", "output_foldes_collation6", fallback="Transclean"),
-        "Collation7": config.get("Settings", "output_foldes_collation7", fallback="Enhwhitclean")
+        "Collation7": config.get("Settings", "output_foldes_collation7", fallback="Enhwhitclean"),
+        "Collation8": config.get("Settings", "output_foldes_collation8", fallback="Swapcolors"),
+        "Collation9": config.get("Settings", "output_foldes_collation9", fallback="Invert")
     }
 
 # -------------------------------------------------------------------
@@ -363,7 +347,7 @@ if __name__ == "__main__":
     # Hier wird für jeden Collation-Key aus der INI geprüft, ob die Verarbeitung aktiviert ist.
     # -------------------------------------------------------------------
     collation_flags = {}
-    for n in range(1, 8):
+    for n in range(1, 9):
         key = f"collation{n}"
         try:
             flag_value = config.get("CleanUp", key).strip().lower()
@@ -1533,117 +1517,163 @@ if __name__ == "__main__":
 
 🐍 --- 0skripts\SwapColors.py ---
 """
-SwapColors.py – tauscht definierte Farbpaare mit Toleranz.
+FillColors.py – ersetzt definierte Farbpaare mit Toleranz.
 Vorgaben stehen in settings.ini unter [swap].
 Das Modul bearbeitet ausschließlich den Ordner 03-swapcolors.
-Abhängigkeiten: _utils.py (INI lesen) und _logger.py (Logging).
+Abhängigkeiten: utils.py (INI lesen) und logger.py (Logging).
 """
-
 from pathlib import Path
 import cv2
 import numpy as np
-
 from _utils import load_settings_ini
 from _logger import log_message, shorten_path
-
-
 # ----------------------------------------------------------
 # Hilfsfunktionen
 # ----------------------------------------------------------
-def _hex_to_lab(hex_color: str) -> np.ndarray:
-    bgr = _hex_to_bgr(hex_color).reshape(1, 1, 3)
+def hex_to_lab(hex_color: str) -> np.ndarray:
+    bgr = hex_to_bgr(hex_color).reshape(1, 1, 3)
     lab = cv2.cvtColor(bgr, cv2.COLOR_BGR2LAB)[0, 0]
     return lab.astype(np.float32)
 
+def hex_to_bgr(hex_color: str) -> np.ndarray:
+    """Konvertiert Hex-Farbcode (#RRGGBB) in BGR-Array."""
+    hex_color = hex_color.lstrip("#")
+    r, g, b = [int(hex_color[i:i+2], 16) for i in (0, 2, 4)]
+    return np.array([b, g, r], dtype=np.uint8)
 
+def deltaE_ciede2000(lab_img: np.ndarray, lab_color: np.ndarray) -> np.ndarray:
+    """Berechnet CIEDE2000 Delta E zwischen Lab-Bild und Lab-Farbe."""
+    # Lab-Werte extrahieren
+    L1, a1, b1 = cv2.split(lab_img)
+    L2, a2, b2 = lab_color
+
+    # Vereinfachte Delta E Berechnung (hier könnte ein vollständiger CIEDE2000 Algorithmus implementiert werden)
+    # Für eine einfache Implementierung nutzen wir die euklidische Distanz
+    dL = L1 - L2
+    da = a1 - a2
+    db = b1 - b2
+
+    return np.sqrt(dL**2 + da**2 + db**2)
 # ----------------------------------------------------------
 # Kernfunktion: ein Bild bearbeiten
 # ----------------------------------------------------------
-def swap_colors_in_image(img_path: Path,
+def fill_colors_in_image(img_path: Path,
                          pairs_hex: list[tuple[str, str]],
-                         delta_e_max: float,
-                         overwrite: bool = True) -> None:
+                         delta_e_max: float) -> None:
     img_bgr = cv2.imread(str(img_path), cv2.IMREAD_UNCHANGED)
     if img_bgr is None:
         log_message(f"Bild nicht lesbar: {shorten_path(str(img_path))}", level="error")
         return
-
     alpha = None
     if img_bgr.shape[2] == 4:
         alpha = img_bgr[:, :, 3:].copy()
         img_bgr = img_bgr[:, :, :3]
-
     img_lab = cv2.cvtColor(img_bgr, cv2.COLOR_BGR2LAB).astype(np.float32)
-
     # Referenzfarben vorbereiten
     pairs_lab_bgr = [
-        (_hex_to_lab(src_hex), _hex_to_bgr(dst_hex))
+        (hex_to_lab(src_hex), hex_to_bgr(dst_hex))
         for src_hex, dst_hex in pairs_hex
     ]
-
     for src_lab, dst_bgr in pairs_lab_bgr:
         # ΔE*2000 pro Pixel
         dE = deltaE_ciede2000(img_lab, src_lab)
         mask = dE <= delta_e_max
         img_bgr[mask] = dst_bgr
-
     if alpha is not None:
         img_out = cv2.merge([img_bgr, alpha])
     else:
         img_out = img_bgr
-
-    out_path = img_path if overwrite else img_path.with_stem(img_path.stem + "_swap")
-    out_path = str(out_path)
+    # Immer überschreiben
+    out_path = str(img_path)
     if not cv2.imwrite(out_path, img_out):
         log_message(f"Fehler beim Schreiben: {shorten_path(out_path)}", level="error")
     else:
-        log_message(f"Farben getauscht: {shorten_path(out_path)}", level="info")
+        log_message(f"Farben ersetzt: {shorten_path(out_path)}", level="info")
+# ----------------------------------------------------------
+# Hilfsfunktion zum Finden des Collation-Ordners
+# ----------------------------------------------------------
+def find_collation_folder(root_folder: Path, target_folder_name: str) -> Path:
+    """Sucht den Collation-Ordner im angegebenen Pfad."""
+    candidate = root_folder / target_folder_name
+    if candidate.is_dir():
+        return candidate
+    return None
+
 # ----------------------------------------------------------
 # Einstieg (Collation-Controller oder CLI)
 # ----------------------------------------------------------
 def run(root: Path) -> None:
     """
     root:
-      • direkt 03-swapcolors oder
-      • ein Datumsordner wie 250425_01 (dann wird 03-swapcolors gesucht).
+      • direkt der Zielordner oder
+      • ein Datumsordner (dann wird der konfigurierte Ordner gesucht).
     """
-    swap_dir = root
-    if root.is_dir() and root.name != "03-swapcolors":
-        cand = root / "03-swapcolors"
-        if cand.is_dir():
-            swap_dir = cand
-        else:
-            log_message("03-swapcolors nicht gefunden – Modul beendet.", level="warning")
-            return
-
+    # Einstellungen aus INI laden
     cfg = load_settings_ini()
-    swap_cfg = cfg["swap"]
+
+    # Debug-Informationen
+    log_message(f"Startordner: {root}", level="info")
+
+    # Ordnernamen aus Settings lesen
+    folder_name = "swapcolors"  # Standardwert
+    if "Settings" in cfg:
+        folder_name = cfg["Settings"].get("output_foldes_collation8", "swapcolors")
+
+    # Zielordnername mit Präfix "03-"
+    target_folder_name = f"03-{folder_name}"
+    log_message(f"Suche nach Ordner: '{target_folder_name}'", level="info")
+
+    # Prüfen, ob der übergebene Pfad selbst der Zielordner ist
+    if root.name == target_folder_name:
+        swap_dir = root
+        log_message(f"Zielordner ist der Startordner: {swap_dir}", level="info")
+    else:
+        # Ordner im übergebenen Pfad suchen
+        swap_dir = find_collation_folder(root, target_folder_name)
+        if swap_dir is None:
+            log_message(f"Ordner '{target_folder_name}' nicht gefunden – Modul beendet.", level="warning")
+            log_message(f"Verfügbare Unterordner: {[d.name for d in root.iterdir() if d.is_dir()]}", level="info")
+            return
+        log_message(f"Zielordner gefunden: {swap_dir}", level="info")
+
+    # Swap-Konfiguration laden
+    swap_cfg = cfg["swap"] if "swap" in cfg else {}
 
     # Farbpaar-Liste aus INI
-    pairs: list[tuple[np.ndarray, np.ndarray]] = []
+    pairs_hex = []
     idx = 1
     while f"src_color_{idx}" in swap_cfg:
-        src = _hex_to_bgr(swap_cfg[f"src_color_{idx}"])
-        dst = _hex_to_bgr(swap_cfg[f"dst_color_{idx}"])
-        pairs.append((src, dst))
+        src_hex = swap_cfg[f"src_color_{idx}"]
+        dst_hex = swap_cfg[f"dst_color_{idx}"]
+        pairs_hex.append((src_hex, dst_hex))
         idx += 1
-
-    tol = swap_cfg.getfloat("tolerance", fallback=5.0)
-    ow = swap_cfg.getboolean("overwrite", fallback=True)
+    cfg = load_settings_ini()
+    swap_cfg = cfg["swap"]
+    # Farbpaar-Liste aus INI
+    pairs_hex = []
+    idx = 1
+    while f"src_color_{idx}" in swap_cfg:
+        src_hex = swap_cfg[f"src_color_{idx}"]
+        dst_hex = swap_cfg[f"dst_color_{idx}"]
+        pairs_hex.append((src_hex, dst_hex))
+        idx += 1
+    tol = 5.0  # Standardwert
+    if "tolerance" in swap_cfg:
+        try:
+            tol = float(swap_cfg["tolerance"])
+        except (ValueError, TypeError):
+            log_message("Ungültiger Wert für 'tolerance' in settings.ini - verwende Standard (5.0)", level="warning")
 
     for img_path in swap_dir.rglob("*"):
         if img_path.suffix.lower() in {".png", ".jpg", ".jpeg", ".bmp", ".tiff"}:
-            swap_colors_in_image(img_path, pairs, tol, overwrite=ow)
-
-
+            fill_colors_in_image(img_path, pairs_hex, tol)
 # ----------------------------------------------------------
 # Stand-alone-Aufruf
 # ----------------------------------------------------------
 if __name__ == "__main__":
     import sys
-
     if len(sys.argv) != 2:
-        print("Aufruf: python SwapColors.py <Datums- oder swapcolors-Ordner>")
+        print("Aufruf: python FillColors.py <Datums- oder Zielordner>")
         sys.exit(1)
     run(Path(sys.argv[1]))
 
@@ -2142,6 +2172,120 @@ def find_latest_date_folder(search_dir):
 # Unterstützte Dateiformate
 # ----------------------------------------------------------
 supported_extensions = ['png', 'jpg', 'jpeg', 'bmp', 'tiff', 'webp']
+
+🐍 --- 0skripts\invert.py ---
+"""
+Invert.py – kehrt die Farben in Bildern um.
+Das Modul bearbeitet ausschließlich den Ordner 'invert'.
+Abhängigkeiten: utils.py (INI lesen) und logger.py (Logging).
+"""
+from pathlib import Path
+import cv2
+import numpy as np
+from _utils import load_settings_ini
+from _logger import log_message, shorten_path
+
+# ----------------------------------------------------------
+# Kernfunktion: ein Bild bearbeiten
+# ----------------------------------------------------------
+def invert_colors_in_image(img_path: Path) -> None:
+    img = cv2.imread(str(img_path), cv2.IMREAD_UNCHANGED)
+    if img is None:
+        log_message(f"Bild nicht lesbar: {shorten_path(str(img_path))}", level="error")
+        return
+
+    alpha = None
+    if img.shape[2] == 4:  # Bild hat einen Alpha-Kanal
+        alpha = img[:, :, 3:].copy()
+        img_color = img[:, :, :3]
+    else:
+        img_color = img
+
+    # Farben invertieren
+    inverted = 255 - img_color
+
+    # Alpha-Kanal wieder hinzufügen, falls vorhanden
+    if alpha is not None:
+        img_out = cv2.merge([inverted, alpha])
+    else:
+        img_out = inverted
+
+    # In Originaldatei speichern
+    out_path = str(img_path)
+    if not cv2.imwrite(out_path, img_out):
+        log_message(f"Fehler beim Schreiben: {shorten_path(out_path)}", level="error")
+    else:
+        log_message(f"Farben invertiert: {shorten_path(out_path)}", level="info")
+
+# ----------------------------------------------------------
+# Hilfsfunktion zum Finden des Collation-Ordners
+# ----------------------------------------------------------
+def find_collation_folder(root_folder: Path, target_folder_name: str) -> Path:
+    """Sucht den Collation-Ordner im angegebenen Pfad."""
+    candidate = root_folder / target_folder_name
+    if candidate.is_dir():
+        return candidate
+    return None
+
+# ----------------------------------------------------------
+# Einstieg (Collation-Controller oder CLI)
+# ----------------------------------------------------------
+def run(root: Path) -> None:
+    """
+    root:
+      • direkt der Zielordner oder
+      • ein Datumsordner (dann wird der konfigurierte Ordner gesucht).
+    """
+    # Einstellungen aus INI laden
+    cfg = load_settings_ini()
+
+    # Debug-Informationen
+    log_message(f"Startordner: {root}", level="info")
+
+    # Ordnernamen aus Settings lesen
+    folder_name = "invert"  # Standardwert
+    if "Settings" in cfg:
+        folder_name = cfg["Settings"].get("output_foldes_collation9", "invert")
+
+    # Zielordnername mit Präfix "03-"
+    target_folder_name = f"03-{folder_name}"
+    log_message(f"Suche nach Ordner: '{target_folder_name}'", level="info")
+
+    # Prüfen, ob der übergebene Pfad selbst der Zielordner ist
+    if root.name == target_folder_name:
+        invert_dir = root
+        log_message(f"Zielordner ist der Startordner: {invert_dir}", level="info")
+    else:
+        # Ordner im übergebenen Pfad suchen
+        invert_dir = find_collation_folder(root, target_folder_name)
+        if invert_dir is None:
+            log_message(f"Ordner '{target_folder_name}' nicht gefunden – Modul beendet.", level="warning")
+            log_message(f"Verfügbare Unterordner: {[d.name for d in root.iterdir() if d.is_dir()]}", level="info")
+            return
+        log_message(f"Zielordner gefunden: {invert_dir}", level="info")
+
+    # Invert-Konfiguration laden (für zukünftige Erweiterungen)
+    invert_cfg = cfg["invert"] if "invert" in cfg else {}
+
+    # Alle Bilder im Ordner und Unterordnern verarbeiten
+    processed_count = 0
+    for img_path in invert_dir.rglob("*"):
+        if img_path.suffix.lower() in {".png", ".jpg", ".jpeg", ".bmp", ".tiff"}:
+            invert_colors_in_image(img_path)
+            processed_count += 1
+
+    log_message(f"Invert abgeschlossen: {processed_count} Bilder verarbeitet", level="info")
+    log_separator()
+
+# ----------------------------------------------------------
+# Stand-alone-Aufruf
+# ----------------------------------------------------------
+if __name__ == "__main__":
+    import sys
+    if len(sys.argv) != 2:
+        print("Aufruf: python Invert.py <Datums- oder Zielordner>")
+        sys.exit(1)
+    run(Path(sys.argv[1]))
 
 🐍 --- src\__init__.py ---
 

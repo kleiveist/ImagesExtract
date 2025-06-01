@@ -7,9 +7,9 @@ def find_0skripts_directory(start_path):
     """Suche rekursiv nach dem `0Skripts`-Ordner, indem nach oben gegangen wird."""
     current_path = start_path
     while True:
-        possible_path = os.path.join(current_path, "0Skripts")
+        possible_path = os.path.join(current_path, "Skripts")
         if os.path.exists(possible_path):
-            return possible_path  # `0Skripts` wurde gefunden!
+            return possible_path  # `Skripts` wurde gefunden!
 
         # Falls Root-Verzeichnis erreicht, abbrechen
         parent_path = os.path.dirname(current_path)
@@ -35,7 +35,7 @@ sys.path.append(script_directory)
 try:
     from _logger import log_message, log_separator, shorten_path_last_n, init_logger
 except ImportError:
-    print("Could not import logger. Make sure `_logger.py` is in `0Skripts`.")
+    print("Could not import logger. Make sure `_logger.py` is in `Skripts`.")
     sys.exit(1)
 
 # **6. LOAD CONFIGURATION FROM .ini FILE**
@@ -62,6 +62,7 @@ part_script7 = os.path.join(script_directory, "SwapColors.py")
 part_script8 = os.path.join(script_directory, "CleanUp.py")
 part_script9 = os.path.join(script_directory, "Scal.py")
 part_script10 = os.path.join(script_directory, "Collation.py")
+part_script11 = os.path.join(script_directory, "invert.py")
 # part_script6 = os.path.join(script_directory, "Modu6.py")
 
 # **8. INITIALIZE LOGGER**
@@ -81,7 +82,8 @@ scripts_to_run = [
     ("SwapColors.py", part_script7),
     ("CleanUp.py", part_script8),
     ("Scal.py", part_script9),
-    ("Collation.py", part_script10)
+    ("Collation.py", part_script10),
+    ("invert.py", part_script11)
     # ("Modul6.py", part_script6)
 ]
 

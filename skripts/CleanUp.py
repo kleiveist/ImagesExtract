@@ -161,7 +161,9 @@ if __name__ == "__main__":
         "Collation4": config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite"),
         "Collation5": config.get("Settings", "output_foldes_collation5", fallback="Enhanclean"),
         "Collation6": config.get("Settings", "output_foldes_collation6", fallback="Transclean"),
-        "Collation7": config.get("Settings", "output_foldes_collation7", fallback="Enhwhitclean")
+        "Collation7": config.get("Settings", "output_foldes_collation7", fallback="Enhwhitclean"),
+        "Collation8": config.get("Settings", "output_foldes_collation8", fallback="Swapcolors"),
+        "Collation9": config.get("Settings", "output_foldes_collation9", fallback="Invert")
     }
 
 # -------------------------------------------------------------------
@@ -169,7 +171,7 @@ if __name__ == "__main__":
     # Hier wird für jeden Collation-Key aus der INI geprüft, ob die Verarbeitung aktiviert ist.
     # -------------------------------------------------------------------
     collation_flags = {}
-    for n in range(1, 8):
+    for n in range(1, 9):
         key = f"collation{n}"
         try:
             flag_value = config.get("CleanUp", key).strip().lower()

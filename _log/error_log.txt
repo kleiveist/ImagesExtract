@@ -1,0 +1,10 @@
+2025-06-01 11:21:49,515 - [WARN] Keine gültigen Skalierungsstufen innerhalb der definierten Grenzen gefunden. Beende das
+Programm.
+2025-06-01 11:33:13,137 - [WARN] No convertible files found. Script will exit.
+2025-06-01 11:33:13,199 - [ERROR] No valid date folder (JJMMTT or JJMMTT_XX) found. Exiting.
+2025-06-01 11:33:13,205 - [ERROR] Script Folders.py execution failed: Command '['python',
+'X:\\Kleif\\Blobbite\\P25Images_extract\\ImagesExtract\\Skripts\\Folders.py',
+'X:\\Kleif\\Blobbite\\P25Images_extract\\ImagesExtract']' returned non-zero exit status 1.
+2025-06-01 11:53:04,929 - [WARN] Keine gültigen Skalierungsstufen innerhalb der definierten Grenzen gefunden. Beende das
+Programm.
+2025-06-01 11:55:56,728 - [WARN] No convertible files found. Script will exit.
