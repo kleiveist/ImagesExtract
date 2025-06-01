@@ -11,15 +11,16 @@ config_path = os.path.join(script_directory, "settings.ini")
 
 config = configparser.ConfigParser()
 config.read(config_path)
-
-output_format = config["Settings"]["output_format"]
+settings      = config["Settings"]
+output_format = settings.get("output_format", ".png")
+collection    = settings.get("output_folder", "image_ext").strip()
 supported_formats = [".webp", ".bmp", ".jpg", ".jpeg", ".png", ".tiff"]
 
 # **2. CHECK HOW THE SCRIPT WAS STARTED**
-if len(sys.argv) > 1:
-    base_folder = sys.argv[1]
-else:
-    base_folder = os.getcwd()
+base_folder = sys.argv[1] if len(sys.argv) > 1 else os.getcwd()
+# Sammel-Ordner sicherstellen
+collection_root = os.path.join(base_folder, collection)
+os.makedirs(collection_root, exist_ok=True)
 
 # **CHECK IF FILES EXIST (BEFORE CREATING A FOLDER)**
 files_to_convert = [
@@ -36,13 +37,13 @@ init_logger(base_folder)
 script_name = os.path.basename(__file__)  # Dynamically get the script's filename
 log_message(f"{script_name} started with Input-Folder: {shorten_path(base_folder)}", level="info")
 
-# **3. CREATE NEW DATE-NAMED FOLDER**
+# **3. CREATE NEW DATE-NAMED FOLDER – im Sammel-Ordner**
 today_str = datetime.datetime.now().strftime("%y%m%d")
-new_folder = os.path.join(base_folder, today_str)
+new_folder = os.path.join(collection_root, today_str)
 
 counter = 1
 while os.path.exists(new_folder):
-    new_folder = os.path.join(base_folder, f"{today_str}_{counter:02d}")
+    new_folder = os.path.join(collection_root, f"{today_str}_{counter:02d}")
     counter += 1
 
 os.makedirs(new_folder)

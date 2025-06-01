@@ -44,3 +44,17 @@
 - [ ]  Relevant logs, error messages, or screenshots
 - [ ]  Module/script affected
 ---
+#4 General Changes & Refactoring
+---
+Title: General Changes & Code Refactoring (Meta-Issue)
+**Description:**
+- This issue collects all general improvements, code style changes, refactoring tasks, and maintenance that are not bugfixes or new features.
+- Use this issue to suggest or discuss any changes that affect code quality, organization, documentation updates, restructuring, or cleanup.
+- Please link or reference related sub-issues or pull requests here.
+---
+**Sub-Issue Template:**
+- [ ] Description of the change or refactor
+- [ ] Motivation (Why is this change necessary?)
+- [ ] Impacted modules/scripts/files
+- [ ] Checklist or acceptance criteria
+---

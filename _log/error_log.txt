@@ -8,3 +8,5 @@ Programm.
 2025-06-01 11:53:04,929 - [WARN] Keine gültigen Skalierungsstufen innerhalb der definierten Grenzen gefunden. Beende das
 Programm.
 2025-06-01 11:55:56,728 - [WARN] No convertible files found. Script will exit.
+2025-06-01 14:05:16,623 - [WARN] Keine gültigen Skalierungsstufen innerhalb der definierten Grenzen gefunden. Beende das
+Programm.
