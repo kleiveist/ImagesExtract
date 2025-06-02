@@ -1,2 +1,4 @@
 /image_ext
-0skripts/__pycache__
+/skripts/__pycache__
+/.obsidian
+.gitignore

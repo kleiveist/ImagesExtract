@@ -58,12 +58,12 @@ part_script3 = os.path.join(script_directory, "Enhancement.py")
 part_script4 = os.path.join(script_directory, "TransBack.py")
 part_script5 = os.path.join(script_directory, "Extract.py")
 part_script6 = os.path.join(script_directory, "ExtractGray.py")
-part_script7 = os.path.join(script_directory, "SwapColors.py")
-part_script8 = os.path.join(script_directory, "CleanUp.py")
-part_script9 = os.path.join(script_directory, "Scal.py")
-part_script10 = os.path.join(script_directory, "Collation.py")
-part_script11 = os.path.join(script_directory, "invert.py")
-# part_script6 = os.path.join(script_directory, "Modu6.py")
+part_script7 = os.path.join(script_directory, "CleanUp.py")
+part_script8 = os.path.join(script_directory, "Scal.py")
+part_script9 = os.path.join(script_directory, "Collation.py")
+#part_script10 = os.path.join(script_directory, "SwapColors.py") 
+#part_script11 = os.path.join(script_directory, "invert.py")
+# part_script12 = os.path.join(script_directory, "Modu12.py")
 
 # **8. INITIALIZE LOGGER**
 init_logger(current_test_directory)
@@ -79,12 +79,12 @@ scripts_to_run = [
     ("TransBack.py", part_script4),
     ("Extract.py", part_script5),
     ("ExtractGray.py", part_script6),
-    ("SwapColors.py", part_script7),
-    ("CleanUp.py", part_script8),
-    ("Scal.py", part_script9),
-    ("Collation.py", part_script10),
-    ("invert.py", part_script11)
-    # ("Modul6.py", part_script6)
+    ("CleanUp.py", part_script7),
+    ("Scal.py", part_script8),
+    ("Collation.py", part_script9)
+#    ("SwapColors.py", part_script10),
+#    ("invert.py", part_script11),
+#    ("Modul6.py", part_script12)
 ]
 
 for script_name, script_path in scripts_to_run:

@@ -33,7 +33,7 @@ def create_collation_folders():
         "output_foldes_collation4": config.get("Settings", "output_foldes_collation4", fallback="Enhancwhite"),
         "output_foldes_collation5": config.get("Settings", "output_foldes_collation5", fallback="Enhanclean"),
         "output_foldes_collation6": config.get("Settings", "output_foldes_collation6", fallback="Transclean"),
-        "output_foldes_collation6": config.get("Settings", "output_foldes_collation6", fallback="Enhwhitclean"),
+        "output_foldes_collation7": config.get("Settings", "output_foldes_collation7", fallback="Enhwhitclean"),
         # Hier können weitere Output-Folder ergänzt werden, z. B. "output_foldes_collation6": "Name6", etc.
     }
 
