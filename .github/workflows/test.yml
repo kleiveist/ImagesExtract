@@ -1,0 +1,276 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - main
+      - "restore/**"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PIP_DISABLE_PIP_VERSION_CHECK: "1"
+  PYTHONDONTWRITEBYTECODE: "1"
+  PYTHONUTF8: "1"
+
+jobs:
+  lint:
+    name: Ruff
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+
+      - name: Python einrichten
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Entwicklungsabhängigkeiten installieren
+        run: python -m pip install -e ".[dev]"
+
+      - name: Ruff-Lint ausführen
+        run: ruff check src tests benchmarks examples
+
+      - name: Formatierung prüfen
+        run: ruff format --check src tests benchmarks examples
+
+  tests:
+    name: pytest / Python ${{ matrix.python-version }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.12"
+          - "3.13"
+          - "3.14"
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+
+      - name: Python einrichten
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Paket und Testabhängigkeiten installieren
+        run: python -m pip install -e ".[test]"
+
+      - name: Tests mit Branch-Coverage ausführen
+        run: >-
+          pytest -q
+          --cov=images_extract
+          --cov-branch
+          --cov-fail-under=80
+          --cov-report=term-missing
+          --cov-report=xml
+
+  wheel:
+    name: Wheel in frischer Umgebung
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+
+      - name: Python einrichten
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Build-Frontend installieren
+        run: python -m pip install --upgrade build
+
+      - name: Sdist und Wheel bauen
+        run: python -m build
+
+      - name: Frische Wheel-Umgebung anlegen
+        run: python -m venv "$RUNNER_TEMP/images-extract-wheel"
+
+      - name: Genau ein Wheel prüfen
+        run: test "$(find dist -maxdepth 1 -type f -name '*.whl' | wc -l)" -eq 1
+
+      - name: Wheel installieren
+        run: >-
+          "$RUNNER_TEMP/images-extract-wheel/bin/python"
+          -m pip install dist/*.whl
+
+      - name: Installierten CLI-Einstiegspunkt prüfen
+        run: |
+          "$RUNNER_TEMP/images-extract-wheel/bin/images-extract" --help
+          "$RUNNER_TEMP/images-extract-wheel/bin/images-extract" doctor
+          "$RUNNER_TEMP/images-extract-wheel/bin/images-extract" validate-config
+
+  fish-smoke:
+    name: Fish-Quick-Start
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      SMOKE_OUTPUT: /tmp/images-extract-smoke
+      EMPTY_INPUT: /tmp/images-extract-empty
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+
+      - name: Python einrichten
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Fish installieren
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes fish
+
+      - name: Eingabeprüfsummen sichern
+        run: >-
+          find examples/input -type f -print0
+          | sort -z
+          | xargs -0 sha256sum
+          > "$RUNNER_TEMP/images-extract-input.sha256"
+
+      - name: Dokumentierten Fish-Quick-Start ausführen
+        shell: fish {0}
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate.fish
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          images-extract doctor
+          images-extract run examples/input --output "$SMOKE_OUTPUT"
+
+      - name: Quellen und Ausgabe validieren
+        run: |
+          sha256sum --check "$RUNNER_TEMP/images-extract-input.sha256"
+          .venv/bin/python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          from PIL import Image
+
+          output = Path(os.environ["SMOKE_OUTPUT"])
+          manifests = sorted(output.glob("runs/*/manifest.json"))
+          assert len(manifests) == 1, manifests
+          manifest = json.loads(manifests[0].read_text(encoding="utf-8"))
+          assert manifest["schema_version"] == 1
+          assert manifest["status"] == "success"
+          pngs = sorted(output.glob("runs/**/*.png"))
+          assert pngs, "no PNG output was generated"
+          for path in pngs:
+              with Image.open(path) as image:
+                  image.verify()
+              with Image.open(path) as image:
+                  assert image.mode == "RGBA", (path, image.mode)
+          assert not list(output.glob("runs/**/*.tmp"))
+          assert not list(output.glob("runs/**/*.tmp.*"))
+          PY
+
+      - name: Zweiten identischen Lauf prüfen
+        run: |
+          .venv/bin/images-extract run examples/input --output "$SMOKE_OUTPUT"
+          sha256sum --check "$RUNNER_TEMP/images-extract-input.sha256"
+          test "$(find "$SMOKE_OUTPUT/runs" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 2
+          test -z "$(find "$SMOKE_OUTPUT" -type d -regex '.*/x[0-9]+/x[0-9]+')"
+
+      - name: Leeren Input ohne neuen Run prüfen
+        run: |
+          mkdir -p "$EMPTY_INPUT"
+          before="$(find "$SMOKE_OUTPUT/runs" -mindepth 1 -maxdepth 1 -type d | wc -l)"
+          set +e
+          .venv/bin/images-extract run "$EMPTY_INPUT" --output "$SMOKE_OUTPUT"
+          empty_status="$?"
+          set -e
+          test "$empty_status" -eq 1
+          after="$(find "$SMOKE_OUTPUT/runs" -mindepth 1 -maxdepth 1 -type d | wc -l)"
+          test "$before" -eq "$after"
+
+  cachyos-fish-smoke:
+    name: CachyOS-/Fish-Quick-Start
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    container:
+      image: cachyos/cachyos:latest
+    env:
+      SMOKE_OUTPUT: /tmp/images-extract-cachyos-smoke
+      EMPTY_INPUT: /tmp/images-extract-cachyos-empty
+    steps:
+      - name: CachyOS-Werkzeuge installieren
+        run: >-
+          pacman -Syu --noconfirm --needed
+          git python python-pip fish
+
+      - name: Repository auschecken
+        uses: actions/checkout@v6
+
+      - name: Eingabeprüfsummen sichern
+        run: >-
+          find examples/input -type f -print0
+          | sort -z
+          | xargs -0 sha256sum
+          > "$RUNNER_TEMP/images-extract-cachyos-input.sha256"
+
+      - name: Dokumentierten Fish-Quick-Start ausführen
+        shell: fish {0}
+        run: |
+          python -m venv .venv
+          source .venv/bin/activate.fish
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          images-extract doctor
+          images-extract run examples/input --output "$SMOKE_OUTPUT"
+
+      - name: CachyOS-Ausgaben validieren
+        run: |
+          sha256sum --check "$RUNNER_TEMP/images-extract-cachyos-input.sha256"
+          .venv/bin/python - <<'PY'
+          import json
+          import os
+          from pathlib import Path
+
+          from PIL import Image
+
+          output = Path(os.environ["SMOKE_OUTPUT"])
+          manifests = sorted(output.glob("runs/*/manifest.json"))
+          assert len(manifests) == 1, manifests
+          manifest = json.loads(manifests[0].read_text(encoding="utf-8"))
+          assert manifest["status"] == "success"
+          final_pngs = sorted(output.glob("runs/*/collation/**/*.png"))
+          assert len(final_pngs) == 15, len(final_pngs)
+          for path in final_pngs:
+              with Image.open(path) as image:
+                  assert image.mode == "RGBA", (path, image.mode)
+                  image.verify()
+          PY
+
+      - name: Wiederholung und leeren Input prüfen
+        run: |
+          .venv/bin/images-extract run examples/input --output "$SMOKE_OUTPUT"
+          sha256sum --check "$RUNNER_TEMP/images-extract-cachyos-input.sha256"
+          test "$(find "$SMOKE_OUTPUT/runs" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 2
+          mkdir -p "$EMPTY_INPUT"
+          set +e
+          .venv/bin/images-extract run "$EMPTY_INPUT" --output "$SMOKE_OUTPUT"
+          empty_status="$?"
+          set -e
+          test "$empty_status" -eq 1
+          test "$(find "$SMOKE_OUTPUT/runs" -mindepth 1 -maxdepth 1 -type d | wc -l)" -eq 2
