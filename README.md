@@ -1,198 +1,237 @@
-# ImagesExtract – Modular Batch-Image Processing Toolbox
+# ImagesExtract
 
-> **A flexible, script-based pipeline for converting, organising, enhancing and exporting large numbers of raster images.**
+ImagesExtract ist eine reproduzierbare, nicht-destruktive Kommandozeilen-Pipeline
+für Rasterbilder. Sie liest WebP-, PNG-, JPEG-, BMP- und TIFF-Dateien ein,
+verarbeitet sie über explizite Rezepte und verwendet PNG/RGBA als verbindliches
+Arbeitsformat.
 
-![MIT License](https://img.shields.io/badge/license-MIT-green.svg)  ![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-blue.svg)  ![Build](https://img.shields.io/badge/build-passing-success)
+Das Repository wurde aus der gesicherten Legacy-Baseline vom 29. August 2026
+kontrolliert wiederhergestellt. Der CI-Status wird erst nach einem tatsächlich
+ausgeführten Workflow ausgewiesen.
 
----
+## Sicherheitsversprechen
 
-## Table of Contents
-1. [Project Overview](#project-overview)
-2. [Features](#features)
-3. [Folder & Module Structure](#folder--module-structure)
-4. [Quick Start](#quick-start)
-5. [Configuration – `settings.ini`](#configuration)
-6. [Detailed Workflow](#detailed-workflow)
-7. [Command-Line Usage](#command-line-usage)
-8. [Logging](#logging)
-9. [Troubleshooting & FAQ](#troubleshooting--faq)
-10. [Contributing](#contributing)
-11. [License](#license)
+- Eingabedateien bleiben standardmäßig unverändert.
+- Jeder Lauf besitzt eine eindeutige Run-ID und ein eigenes Verzeichnis.
+- Dateien werden zunächst temporär geschrieben, validiert und anschließend atomar
+  veröffentlicht.
+- Vorhandene Ziele werden ohne `--overwrite` nicht überschrieben.
+- Namenskollisionen führen standardmäßig vor der Verarbeitung zu einem Fehler.
+- Ein leerer Input verändert weder alte Runs noch deren Manifestdateien.
+- Interne Stufen werden im selben Python-Prozess ausgeführt; die Pipeline hängt
+  nicht vom aktuellen Arbeitsverzeichnis ab.
 
----
+Die Optionen `--move-sources`, `--overwrite` und `--delete-intermediates` lockern
+diese Garantien ausdrücklich. Verwende sie nur, wenn die betreffenden Daten
+anderweitig gesichert sind.
 
-## Project Overview
-**ImagesExtract** is a collection of loosely coupled Python scripts designed to automate typical pre- and post-production image tasks:
+## Voraussetzungen
 
-* **Import & conversion** of _webp/jpg/jpeg/bmp/tiff_ (and many other formats) into a unified output format (default **PNG**)  
-* **Folder hygiene & naming conventions** that keep all artefacts per date, format and processing stage nicely separated  
-* **Transparent-background creation**, **object extraction**, **paper-style enhancement**, **cleanup**, **colour swapping**, **invert**, **scaling** and final **collation** – all driven by a single `settings.ini` file  
-* Built-in **logging** with separate `log.txt` and `error_log.txt`  
-* **Modular** – run the full pipeline or execute each module stand-alone  
+- Python 3.11 oder neuer
+- Git
+- Fish für den folgenden Fish-Quick-Start
 
-The toolbox was developed to batch-process thousands of icons and product shots for e-commerce catalogues but works just as well for comics, stickers, UX assets or any other raster imagery.
+Pillow, NumPy und OpenCV werden über das Paket-Metadatenmodell installiert. Eine
+manuell anzulegende `requirements.txt` ist nicht erforderlich.
 
----
+## Quick Start mit Fish
 
-## Features
-| Stage | Script | Purpose |
-|-------|--------|---------|
-| **1 – Convert** | `ConvertWebp.py` | Converts mixed source formats into the unified output format and creates a fresh **date-stamped working folder** (e.g. `250601/`). |
-| **2 – Organise** | `Folders.py` | Builds a canonical folder tree – converts are moved to `01-*`, converted assets to `02-png`, and additional **collation folders** (`03-TransBack`, `03-Enhancement`, …) are generated. |
-| **3 – Transparency** | `TransBack.py` | Removes solid backgrounds or noise and adds an alpha channel based on Canny edge detection plus custom dark-threshold logic. |
-| **4 – Extraction** | `Extract.py`, `ExtractGray.py` | Splits multi-icon spritesheets into individual files using alpha masks; `ExtractGray.py` offers a grey-scale variant. |
-| **5 – Enhancement** | `Enhancement.py` | Applies a user-tunable water-colour/paper effect: colour quantisation, bilateral abstraction, edge overlay, contrast/brightness, noise. |
-| **6 – Cleanup** | `CleanUp.py` | Isolates the main object (largest connected component) and clears everything else for razor-sharp transparency. |
-| **7 – Colour Tools** | `SwapColors.py`, `invert.py` | Swap arbitrary HEX colour pairs within tolerance or fully invert colours (useful for dark mode assets). |
-| **8 – Scaling** | `Scal.py` | Exports common pixel-multiples (25 %, 50 %, 70 %, 80 % …) into sibling `x25/`, `x50/` folders – values are 100 % INI-driven. |
-| **9 – Collation** | `Collation.py` | Collects finished PNGs from all processing branches into convenient `+Collation` folders ready for hand-off. |
-| **10 – Master Runner** | `startskript.py` | Recursively locates the **`Skripts/`** folder, reads module toggles from [Moduls] and executes everything in the correct order. |
+```fish
+git clone https://github.com/kleiveist/ImagesExtract.git
+cd ImagesExtract
 
----
+python -m venv .venv
+source .venv/bin/activate.fish
 
-## Folder & Module Structure
+python -m pip install --upgrade pip
+python -m pip install -e .
+
+images-extract doctor
+images-extract run ~/Bilder/input \
+    --output ~/Bilder/image_ext
 ```
-ImagesExtract/
-├─ Skripts/
-│  ├─ startskript.py
-│  ├─ _logger.py
-│  ├─ _utils.py
-│  ├─ settings.ini
-│  ├─ ConvertWebp.py
-│  ├─ Folders.py
-│  ├─ TransBack.py
-│  ├─ Extract.py
-│  ├─ ExtractGray.py
-│  ├─ Enhancement.py
-│  ├─ CleanUp.py
-│  ├─ SwapColors.py
-│  ├─ invert.py
-│  ├─ Scal.py
-│  └─ Collation.py
-└─ <your-source-images>/
+
+Für einen reproduzierbaren Lauf mit den eingecheckten Beispieldaten:
+
+```fish
+images-extract run examples/input --output /tmp/images-extract-test
 ```
-> **Tip:** Keep `Skripts/` version-controlled while placing your raw input images **outside** the repo.
 
----
+Unter Bash lautet die Aktivierung `source .venv/bin/activate`. Unter Windows
+PowerShell kann `.venv\Scripts\Activate.ps1` verwendet werden.
 
-## Quick Start
-```bash
-# 1.  Clone & enter the repo
-$ git clone https://github.com/your-org/ImagesExtract.git
-$ cd ImagesExtract/Skripts
+## CLI
 
-# 2.  Create & activate a virtual env (recommended)
-$ python -m venv .venv
-$ source .venv/bin/activate  # Windows: .venv\Scripts\activate.bat
+### Gesamte Pipeline ausführen
 
-# 3.  Install dependencies
-$ pip install -r requirements.txt  # see below
-
-# 4.  Drop a bunch of images next to Skripts/ (or pass a path)
-$ cp ../my_icons/*.webp ../
-
-# 5.  Fire the whole pipeline
-$ python startskript.py            # defaults to current working dir
-#    or
-$ python startskript.py /path/to/input_images
-```
-All generated artefacts reside in a **YYMMDD/** folder (e.g. `250601/`) created beside your sources.
-
-### Requirements
-* Python ≥ 3.10  
-* [Pillow](https://pillow.readthedocs.io/)  
-* [OpenCV-Python](https://pypi.org/project/opencv-python/)  
-* numpy  
-
-Create a `requirements.txt` (or let `pip-tools` generate one):
-```
-numpy>=1.26
-opencv-python>=4.11
-Pillow>=10.0
-``` 
-
----
-
-## Configuration
-All behaviour is steered via **`settings.ini`**.  Important sections:
-
-| Section | Key | Description | Default |
-|---------|-----|-------------|---------|
-| `[Settings]` | `output_format` | Target extension for `ConvertWebp.py` & downstream modules | `.png` |
-|  | `extractsize` | Minimum pixel width/height of objects to keep during extraction | `100` |
-|  | `output_foldes_collation*` | Human-readable names of your processing branches (prefixed with `03-`) | see file |
-| `[LOGGER]` | `console_output` | Echo all log lines to stdout | `true` |
-| `[Moduls]` | `<script>.py` | `yes/no` to enable or skip modules globally | `yes` |
-| `[swap]` | `src_color_1`, `dst_color_1`, `tolerance` | Configure HEX colour replacements | – |
-| `[Scaling]` | `active_scales` | Comma-separated list of percentages | `25,50,70,80` |
-
-> 🔧 **Hint:** Toggle modules safely – unused dependencies never load.
-
----
-
-## Detailed Workflow
 ```text
-          ┌──────────────┐   01-webp/png/...           
- Source →  │ConvertWebp   │──────────────┐              
- images    └──────────────┘              │              
-          YYMMDD/                        ▼              
-                        02-png/ (master originals)     
-                                       │              
-              ┌──────────Folders────────┴─┐            
-              │ 03-TransBack             │            
-              │ 03-Enhancement           │ . . .       
-              └──────────────────────────┘            
-                         │  (parallel branches)       
-         ...TransBack…Extract…Enhance…Scale…Collate…  
+images-extract run INPUT --output OUTPUT [--config FILE]
 ```
-Each branch is completely **self-contained**.  Intermediate steps always overwrite in-place to save storage, while original inputs are preserved in `02-png/`.
 
----
+Beispiele:
 
-## Command-Line Usage
-Run everything (default order):
+```fish
+images-extract run ./input --output ./image_ext
+images-extract run ./input --output ./image_ext --config ./images-extract.toml
+images-extract run ./input --output ./image_ext --recipe transback --recipe whitepaper
+```
+
+Wichtige Optionen:
+
+| Option | Bedeutung |
+| --- | --- |
+| `--workers N` | Verarbeitet mit `N` Workern; Standard ist 1, maximal `min(max_workers, 32)`. |
+| `--recipe NAME` | Aktiviert ein Rezept; die Option darf wiederholt werden. |
+| `--collision error\|suffix\|hash` | Legt die Strategie für gleiche Zielnamen fest. |
+| `--allow-empty` | Behandelt einen leeren Input bewusst als übersprungenen Erfolg. |
+| `--run-id ID` | Vergibt eine nachvollziehbare Run-ID statt einer automatisch erzeugten. |
+| `--move-sources` | Verschiebt Quellen ausdrücklich statt sie unverändert zu lassen. |
+| `--overwrite` | Erlaubt das Ersetzen bereits vorhandener Ziele. |
+| `--delete-intermediates` | Entfernt Zwischenprodukte nach erfolgreichem Abschluss. |
+| `--verbose` | Gibt zusätzliche Laufdetails auf der Konsole aus. |
+
+### Einzelne Stufe ausführen
+
+```text
+images-extract stage STAGE INPUT --output OUTPUT
+```
+
+Die verfügbaren Stufen heißen `convert`, `enhance`, `transparency`, `extract`,
+`extract_gray`, `cleanup`, `colors`, `invert`, `scale` und `collate`.
+
+```fish
+images-extract stage convert ./input --output ./converted
+images-extract stage transparency ./converted --output ./transparent
+```
+
+Auch `stage` akzeptiert `--config FILE`, `--workers N`, `--overwrite` und eine
+Kollisionsstrategie. `--collision` wirkt dort ausschließlich bei `convert`.
+
+### Installation und Umgebung prüfen
+
+```text
+images-extract doctor
+```
+
+`doctor` prüft die Python-Umgebung, importierbare Bildabhängigkeiten und die
+verwendbare Standardkonfiguration, ohne Eingabebilder zu verändern.
+Mit `images-extract doctor --config FILE` wird stattdessen die angegebene TOML-
+oder Legacy-INI-Datei geprüft.
+
+### Konfiguration prüfen
+
+```text
+images-extract validate-config
+```
+
+Die Validierung endet vor jeglicher Bildverarbeitung. Ungültige Schwellenwerte,
+Skalen, Farben, Rezepte oder Workerzahlen werden mit dem betroffenen Feld
+gemeldet. Eine eigene Datei wird mit
+`images-extract validate-config --config FILE` validiert.
+
+## Eingabe- und Ausgabeformat
+
+| Phase | Vertrag |
+| --- | --- |
+| Eingabe | WebP, PNG, JPG/JPEG, BMP, TIF/TIFF |
+| Arbeitsformat | PNG mit explizitem RGBA-Kanal |
+| Endexport | zunächst PNG; weitere Formate gehören in eine spätere Exportstufe |
+
+RGB- und Graustufenbilder werden beim Import kontrolliert nach RGBA normalisiert.
+Transparenz wird erhalten. Beschädigte oder nicht lesbare Bilder werden im
+Stufenergebnis gezählt und führen zu einem fehlgeschlagenen Gesamtstatus.
+
+## Runs, Ergebnisse und Manifest
+
+Ein normaler Lauf erzeugt folgende isolierte Struktur:
+
+```text
+OUTPUT/
+└── runs/
+    └── 20260829-231500-a31f/
+        ├── working/
+        ├── recipes/
+        ├── scales/
+        ├── collation/
+        └── manifest.json
+```
+
+Das Manifest enthält mindestens Run-ID, Zeitstempel, normalisierte Optionen,
+Eingaben mit Prüfsummen, die aufgelöste Konfiguration sowie für jede Stufe Status,
+Zähler, Laufzeit, Ausgaben und Fehler. Ein Stufenstatus ist `success`, `skipped`
+oder `failed`.
+
+## Kollisionsregeln
+
+Wenn etwa `icon.jpg` und `icon.webp` beide zu `icon.png` würden, greift die
+gewählte Strategie:
+
+- `error` ist der sichere Standard und bricht vor dem Schreiben ab.
+- `suffix` erzeugt deterministisch nummerierte Namen.
+- `hash` ergänzt einen kurzen, aus der Quelle abgeleiteten Hash.
+
+Keine Strategie überschreibt still eine bereits vorhandene Datei. Dazu wäre
+zusätzlich die ausdrückliche Option `--overwrite` erforderlich.
+
+## Exitcodes
+
+| Code | Bedeutung |
+| ---: | --- |
+| `0` | vollständig erfolgreich oder mit `--allow-empty` bewusst übersprungen |
+| `1` | mindestens eine Verarbeitungsstufe ist fehlgeschlagen |
+| `2` | ungültiger Aufruf oder ungültige Konfiguration |
+
+„Keine Eingabedateien“ ist ohne `--allow-empty` ein klarer Fehler vor dem
+Anlegen eines Runs.
+
+## Rezepte und Konfiguration
+
+Rezepte definieren zentral, welche Stufen ein Ergebniszweig durchläuft. Eine
+Stufe enthält keine fest verdrahtete Kenntnis über historische
+„Collation 1 bis 7“-Ordner. Die Standardkonfiguration aktiviert nur das Rezept
+`transback`; weitere Rezepte werden in der TOML-Datei oder über `--recipe`
+zugeschaltet.
+
+Ausgangspunkt für eine eigene TOML-Datei ist
+[`images-extract.example.toml`](images-extract.example.toml); die vollständige
+Referenz steht in [docs/configuration.md](docs/configuration.md). Historische
+`settings.ini`-Dateien werden während der Übergangsphase einschließlich der alten
+`output_foldes_collation*`-Schlüssel eingelesen und auf das neue Modell
+abgebildet. Neue Konfigurationen sollten TOML verwenden.
+
+## Architektur und Prozess
+
+- [Architektur, StageResult und RunContext](docs/architecture.md)
+- [Konfigurationsreferenz und Legacy-Migration](docs/configuration.md)
+- [Verarbeitungsrezepte und Beispielbilder](docs/process.md)
+- [Performance- und Benchmarkregeln](docs/performance.md)
+- [Wiederherstellungs- und Abnahmebericht](docs/restoration-report.md)
+
+Die frühere Skriptsammlung und der alte Master-Runner sind vollständig im Tag
+`legacy-baseline-2026-08-29` gesichert. Der unterstützte Einstiegspunkt ist
+ausschließlich die installierte `images-extract`-CLI.
+
+## Entwicklung
+
 ```bash
-python startskript.py [INPUT_DIR]
+python -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+ruff check .
+ruff format --check .
+pytest
 ```
-Run a single module (for experimentation or CI):
-```bash
-python TransBack.py              # uses CWD & settings.ini
-python Scal.py /path/to/250601   # explicit date folder
-```
-Arguments vary by script – open any `*.py` and read the docstring or `--help` block.
 
----
+Der GitHub-Workflow prüft die vorgesehenen Python-Versionen, Ruff, pytest, den
+Wheel-Einbau in eine frische Umgebung sowie den dokumentierten Fish-Smoke-Test
+auf Ubuntu und zusätzlich im
+[offiziellen CachyOS-Container](https://github.com/CachyOS/docker).
+Ein Badge wird erst ergänzt, nachdem dieser Workflow tatsächlich gelaufen ist.
 
-## Logging
-* **`log.txt`** – full pipeline chronology (only if `[LOGGER] logging_enabled = true`)  
-* **`error_log.txt`** – warnings, errors & deletions **always** collected  
-* Each line is prefixed with intuitive icons: `[OK]`, `[ERROR]`, `[WARN]`, `[DELETE]`, `[INFO]`.
+Details für Beiträge stehen in [CONTRIBUTING.md](CONTRIBUTING.md); Änderungen
+werden in [CHANGELOG.md](CHANGELOG.md) dokumentiert.
 
----
+## Lizenz
 
-## Troubleshooting & FAQ
-| Symptom | Probable Cause | Fix |
-|---------|----------------|-----|
-| `opencv-python` fails to import | Missing system libs on Linux | `sudo apt install libgl1` (Debian/Ubuntu) |
-| `settings.ini not found` | Ran a module from the wrong directory | Always execute **inside** the `Skripts/` folder or supply `--ini /path` |
-| No output images generated | `[Moduls] <script>.py = no` or wrong `output_format` | Enable the module / set correct extension |
-
-Need more help? Open an [issue](https://github.com/your-org/ImagesExtract/issues) with logs attached.
-
----
-
-## Contributing
-1. Fork the repo & create your feature branch (`git checkout -b feat/awesome`)
-2. Commit your changes with conventional commits
-3. Push to the branch and open a PR
-
-Please run `ruff` or `flake8`, add unit tests if possible and keep the coding style Pythonic & explicit.
-
----
-
-## License
-This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
-
----
-
-> **ImagesExtract** – Because batch image processing should be transparent, reproducible and _fun_.
+ImagesExtract steht unter der [MIT-Lizenz](LICENSE.md).

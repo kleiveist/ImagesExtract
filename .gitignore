@@ -1,4 +1,42 @@
-/image_ext
-/skripts/__pycache__
-/.obsidian
-.gitignore
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Test, coverage and type-checking artefacts
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+.tox/
+.nox/
+
+# Packaging artefacts
+build/
+dist/
+*.egg-info/
+
+# Runtime output
+/image_ext/
+/runs/
+/_log/
+*.log
+*.tmp
+*.tmp.*
+/benchmark-results*.json
+/benchmark-output/
+
+# Editors and operating systems
+/.obsidian/
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db

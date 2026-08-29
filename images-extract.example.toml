@@ -1,0 +1,102 @@
+# ImagesExtract configuration example. Relative paths are resolved by the CLI.
+working_format = "png"
+output_folder = "image_ext"
+random_seed = 0
+collision_strategy = "error"
+max_workers = 32
+
+[logging]
+file_enabled = false
+console_enabled = true
+directory = "_log"
+
+[enhancement]
+color_levels = 7
+abstraction_passes = 2
+accuracy = 1.0
+noise_intensity = 10.0
+edge_weight = 0.1
+contrast = 1.2
+brightness = 1.05
+canny_low = 50
+canny_high = 150
+
+[transparency]
+min_component_area = 100
+kernel_size = 13
+dilation_iterations = 1
+dark_weight = 0.45
+dark_threshold_offset = 45
+canny_low = 32
+canny_high = 155
+
+[extraction]
+min_width = 1
+min_height = 1
+min_area = 100
+alpha_threshold = 1
+
+[cleanup]
+intensity_lower = 1
+intensity_upper = 185
+alpha_threshold = 1
+min_area = 100
+selection = "center_then_largest"
+
+[scaling]
+active_scales = [25, 50, 70, 80]
+min_percent = 25
+max_percent = 200
+
+[scaling.scale_options]
+25 = [25, 25]
+50 = [50, 50]
+70 = [70, 70]
+80 = [80, 80]
+
+[colors]
+max_delta_e = 5.0
+metric = "cie76"
+overlap_policy = "first"
+invert = false
+
+[[colors.pairs]]
+source = "#ffffff"
+target = "#143349"
+
+# Exactly one recipe is enabled in the built-in defaults. Enable additional
+# recipes here when their outputs are wanted.
+[recipes.transback]
+enabled = true
+output_name = "TransBack"
+steps = ["transparency", "extract"]
+
+[recipes.enhancement]
+enabled = false
+output_name = "Enhancement"
+steps = ["enhance", "transparency", "extract"]
+
+[recipes.whitepaper]
+enabled = false
+output_name = "Whitepaper"
+steps = ["transparency", "extract_gray"]
+
+[recipes.enhancwhite]
+enabled = false
+output_name = "Enhancwhite"
+steps = ["enhance", "transparency", "extract_gray"]
+
+[recipes.enhanclean]
+enabled = false
+output_name = "Enhanclean"
+steps = ["enhance", "transparency", "extract", "cleanup"]
+
+[recipes.transclean]
+enabled = false
+output_name = "Transclean"
+steps = ["transparency", "extract", "cleanup"]
+
+[recipes.enhwhitclean]
+enabled = false
+output_name = "Enhwhitclean"
+steps = ["enhance", "transparency", "extract_gray", "cleanup"]
