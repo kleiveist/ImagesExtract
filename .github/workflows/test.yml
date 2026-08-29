@@ -123,8 +123,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      SMOKE_OUTPUT: ${{ runner.temp }}/images-extract-smoke
-      EMPTY_INPUT: ${{ runner.temp }}/images-extract-empty
+      SMOKE_OUTPUT: /tmp/images-extract-smoke
+      EMPTY_INPUT: /tmp/images-extract-empty
     steps:
       - name: Repository auschecken
         uses: actions/checkout@v6
@@ -211,8 +211,8 @@ jobs:
     container:
       image: cachyos/cachyos:latest
     env:
-      SMOKE_OUTPUT: ${{ runner.temp }}/images-extract-cachyos-smoke
-      EMPTY_INPUT: ${{ runner.temp }}/images-extract-cachyos-empty
+      SMOKE_OUTPUT: /tmp/images-extract-cachyos-smoke
+      EMPTY_INPUT: /tmp/images-extract-cachyos-empty
     steps:
       - name: CachyOS-Werkzeuge installieren
         run: >-
